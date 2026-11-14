@@ -44,6 +44,42 @@ die|Entkalkung|-en|탈회|Entfernung von Kalk aus Knochen oder verkalktem Gewebe
 |aufarbeiten|arbeitete auf, hat aufgearbeitet|(검체를) 처리하다|Eine Probe vollständig für die Untersuchung vorbereiten.|Das Material wurde komplett aufgearbeitet.
 |einlegen|legte ein, hat eingelegt|(카세트에) 넣다, 담그다|Gewebe in eine Kassette oder eine Lösung legen.|Die Biopsien sind schon eingelegt.
 
+# Anatomie | 해부학 (장기)
+der|Magen|Mägen|위|Hohlorgan, in dem die Nahrung verdaut wird. Fachsprache: Gaster, Adj. gastral.|Aus dem Magen kommen heute Biopsien aus Antrum und Korpus.
+die|Speiseröhre|-n|식도|Muskulärer Schlauch vom Rachen zum Magen. Fachsprache: Ösophagus.|Die Biopsie aus der Speiseröhre zeigt eine Refluxösophagitis.
+der|Zwölffingerdarm|Zwölffingerdärme|십이지장|Erster Abschnitt des Dünndarms direkt nach dem Magen. Fachsprache: Duodenum.|In der Biopsie aus dem Zwölffingerdarm suchen wir nach Zeichen einer Zöliakie.
+der|Dünndarm|Dünndärme|소장|Langer Darmabschnitt, in dem die Nährstoffe aufgenommen werden.|Die Zotten im Dünndarm sind abgeflacht.
+der|Dickdarm|Dickdärme|대장|Darmabschnitt vom Blinddarm bis zum Mastdarm. Fachsprache: Kolon.|Das Dickdarmresektat enthält ein Karzinom.
+der|Mastdarm|Mastdärme|직장|Letzter Abschnitt des Dickdarms. Fachsprache: Rektum.|Beim Karzinom im Mastdarm ist der zirkumferenzielle Rand besonders wichtig.
+der|Wurmfortsatz|Wurmfortsätze|충수|Kleiner, blind endender Anhang am Blinddarm. Fachsprache: Appendix.|Der Wurmfortsatz zeigt eine akute eitrige Entzündung.
+die|Leber|-n|간|Größtes Stoffwechselorgan des Körpers. Fachsprache: Hepar, Adj. hepatisch.|Die Leberbiopsie ist sehr dünn, bitte vorsichtig einbetten.
+die|Gallenblase|-n|담낭|Kleines Organ unter der Leber, das die Galle speichert.|Die Gallenblase enthält mehrere Steine.
+die|Bauchspeicheldrüse|-n|췌장|Drüse, die Verdauungsenzyme und Insulin bildet. Fachsprache: Pankreas.|Das Resektat der Bauchspeicheldrüse (Whipple) wird heute zugeschnitten.
+die|Milz|-en|비장|Organ des Immunsystems im linken Oberbauch; baut alte Blutzellen ab.|Die Milz wurde nach einem Unfall entfernt.
+die|Niere|-n|신장|Organ, das das Blut filtert und Harn bildet. Fachsprache: Ren, Adj. renal.|Von der Nierenbiopsie schneiden wir Schnitte mit 2 µm.
+der|Harnleiter|-|요관|Schlauch, der den Harn von der Niere zur Blase leitet. Fachsprache: Ureter.|Der Harnleiterrand ist tumorfrei.
+die|Harnblase|-n|방광|Hohlorgan, das den Harn sammelt.|Die TUR-Späne aus der Harnblase werden komplett eingebettet.
+die|Prostata||전립선|Drüse beim Mann direkt unter der Harnblase.|Die Prostatastanzen werden nach Lokalisation getrennt eingebettet.
+der|Hoden|-|고환|Männliche Keimdrüse. Fachsprache: Testis.|Der Hoden wird in Lamellen aufgeschnitten.
+die|Gebärmutter|Gebärmütter|자궁|Hohlorgan der Frau, in dem das Kind wächst. Fachsprache: Uterus.|Die Gebärmutter enthält mehrere Myome.
+der|Gebärmutterhals|Gebärmutterhälse|자궁경부|Unterer, enger Teil der Gebärmutter. Fachsprache: Zervix.|Der Konus aus dem Gebärmutterhals wird wie ein Ziffernblatt eingeteilt.
+das|Endometrium|Endometrien|자궁내막|Schleimhaut, die die Gebärmutter innen auskleidet.|Die Abrasio enthält Endometrium in der Sekretionsphase.
+der|Eierstock|Eierstöcke|난소|Weibliche Keimdrüse. Fachsprache: Ovar.|Am rechten Eierstock findet sich eine Zyste.
+der|Eileiter|-|난관|Verbindung zwischen Eierstock und Gebärmutter. Fachsprache: Tube.|Der Eileiter wird komplett eingebettet.
+die|Plazenta|Plazenten|태반|Organ, das das Kind während der Schwangerschaft versorgt.|Die Plazenta wird gewogen und vermessen.
+die|Brustdrüse|-n|유선 (유방)|Drüsengewebe der Brust. Fachsprache: Mamma.|Beim Mammakarzinom ist die Fixierzeit wegen HER2 wichtig.
+die|Schilddrüse|-n|갑상선|Hormondrüse vorne am Hals.|Die Schilddrüse zeigt mehrere Knoten.
+die|Nebenniere|-n|부신|Hormondrüse, die oben auf der Niere sitzt.|In der Nebenniere liegt ein kleines Adenom.
+die|Speicheldrüse|-n|침샘|Drüse, die Speichel bildet, z. B. die Ohrspeicheldrüse (Parotis).|Der Tumor der Speicheldrüse ist ein pleomorphes Adenom.
+die|Mandel|-n|편도|Lymphatisches Gewebe im Rachen. Fachsprache: Tonsille.|Mandelgewebe nehmen wir oft als Positivkontrolle.
+das|Herz|-en|심장|Muskuläres Organ, das das Blut pumpt. Adj. kardial.|Die Herzbiopsie kommt von einer Patientin nach Herztransplantation.
+das|Gehirn|-e|뇌|Zentrales Organ des Nervensystems. Adj. zerebral.|Beim Schnellschnitt aus dem Gehirn macht man oft zusätzlich ein Quetschpräparat.
+die|Haut|Häute|피부|Äußere Hülle des Körpers aus Epidermis, Dermis und Subkutis.|Die Hautexzisate werden mit Tusche markiert.
+das|Bauchfell|-e|복막|Dünne Haut, die die Bauchhöhle auskleidet. Fachsprache: Peritoneum.|Am Bauchfell finden sich kleine Tumorknötchen.
+das|große Netz||대망|Fettgewebsschürze im Bauch, die vor dem Darm hängt. Fachsprache: Omentum majus.|Beim Ovarialkarzinom wird auch das große Netz entfernt.
+|proximal||근위의|Näher am Ursprung oder an der Körpermitte.|Der proximale Resektionsrand ist tumorfrei.
+|distal||원위의|Weiter entfernt vom Ursprung oder von der Körpermitte.|Der distale Rand wird mit blauer Tusche markiert.
+
 # Einbetten und Schneiden | 탈수·포매·박절
 die|Entwässerung|-en|탈수 (조직 처리)|Wasser wird über eine aufsteigende Alkoholreihe aus dem Gewebe entfernt.|Die Kassetten laufen über Nacht im Entwässerungsautomaten.
 die|Alkoholreihe|-n|알코올 단계 (농도별)|Mehrere Alkoholbäder mit steigender oder fallender Konzentration, z. B. 70 %, 96 %, 100 %.|Nach dem Färben kommen die Schnitte durch die aufsteigende Alkoholreihe.
