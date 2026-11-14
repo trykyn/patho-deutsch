@@ -1,0 +1,768 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#f6f1fb" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16121d" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Patho Deutsch">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
+<title>Patho Deutsch</title>
+<style>
+/* 모양: H&E 염색 색 — 헤마톡실린 보라(주 색) + 에오신 분홍(보조 색). 크림빛 라벤더 바탕, 흰 카드.
+   관사 색: der 파랑, die 빨강, das 초록 (독일어 학습에서 흔히 쓰는 색) */
+:root {
+  --bg: #f6f1fb; --card: #ffffff; --ink: #2b2238; --muted: #7a6e8a; --line: #ebe3f4; --field: #f3edfa;
+  --accent: #6a4fbb; --accent-ink: #ffffff; --soft: #ece4f9; --eosin: #e2669a; --eosin-soft: #fde7f0;
+  --good: #2f9e6a; --good-soft: #e3f5ec; --bad: #d4506e; --bad-soft: #fde8ec;
+  --der: #2f6fd0; --die: #d43f6c; --das: #23905d;
+  --r: 22px; --r-sm: 16px;
+  --shadow: 0 1px 2px rgba(43, 34, 56, .05), 0 6px 18px rgba(106, 79, 187, .07);
+  --sans: system-ui, -apple-system, "Apple SD Gothic Neo", "Segoe UI", "Malgun Gothic", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #16121d; --card: #221c2b; --ink: #f1ecf8; --muted: #b0a5c0; --line: #342b40; --field: #2b2336;
+    --accent: #a98ef0; --accent-ink: #1c1030; --soft: #33284a; --eosin: #ff8db8; --eosin-soft: #45233a;
+    --good: #5fd39b; --good-soft: #1e3a2e; --bad: #ff8aa2; --bad-soft: #452630;
+    --der: #7fb0ff; --die: #ff86a8; --das: #6fd6a3;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3);
+  }
+}
+* { box-sizing: border-box; touch-action: pan-x pan-y; -webkit-tap-highlight-color: transparent; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.5 var(--sans); -webkit-text-size-adjust: 100%; }
+main { max-width: 540px; margin: 0 auto; padding: calc(18px + env(safe-area-inset-top)) 16px calc(96px + env(safe-area-inset-bottom)); }
+[hidden] { display: none !important; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; border: 0; background: none; padding: 0; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.num { font-variant-numeric: tabular-nums; }
+
+header { margin-bottom: 16px; }
+.date { margin: 0 0 2px; font-size: 14px; color: var(--muted); }
+h1 { font-size: 30px; font-weight: 800; line-height: 1.15; letter-spacing: -.02em; margin: 0; }
+.card { background: var(--card); border-radius: var(--r); box-shadow: var(--shadow); padding: 16px; margin-bottom: 14px; }
+.card h2 { font-size: 17px; font-weight: 800; margin: 0 0 10px; }
+.sub { color: var(--muted); font-size: 14px; }
+.btn { flex: none; white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 48px; padding: 0 20px; border-radius: 14px; background: var(--accent); color: var(--accent-ink); font-weight: 700; }
+.btn.ghost { background: var(--field); color: var(--ink); }
+.btn.wide { width: 100%; }
+.btn.small { min-height: 38px; padding: 0 14px; font-size: 15px; border-radius: 12px; }
+.row { display: flex; gap: 8px; }
+.row > .btn { flex: 1; }
+
+/* 아래 탭 막대 */
+nav.tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; display: flex; justify-content: center;
+  background: color-mix(in srgb, var(--card) 88%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border-top: 1px solid var(--line); padding: 6px 8px calc(6px + env(safe-area-inset-bottom)); }
+nav.tabbar button { flex: 1; max-width: 160px; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 0; font-size: 12px; color: var(--muted); }
+nav.tabbar svg { width: 26px; height: 26px; }
+nav.tabbar button.on { color: var(--accent); font-weight: 600; }
+
+/* ── 단어장 첫 화면 ── */
+.hero { display: flex; align-items: center; gap: 18px; }
+.ring { position: relative; flex: none; width: 112px; height: 112px; }
+.ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring .in { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; line-height: 1.1; }
+.ring .in b { font-size: 28px; font-weight: 800; }
+.ring .in span { display: block; font-size: 12px; color: var(--muted); }
+.hero-text { flex: 1; min-width: 0; }
+.hero-text h2 { margin: 0 0 4px; font-size: 20px; }
+.hero-text p { margin: 0 0 12px; font-size: 14px; color: var(--muted); }
+.tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 14px; }
+.tile { border-radius: var(--r-sm); background: var(--card); box-shadow: var(--shadow); padding: 12px 10px; text-align: center; }
+.tile b { display: block; font-weight: 800; font-size: 22px; line-height: 1.2; }
+.tile span { font-size: 12px; color: var(--muted); }
+.tile b small { font-size: 13px; font-weight: 600; color: var(--muted); margin-left: 1px; }
+.list-btns { display: grid; gap: 8px; }
+.menu-btn { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 14px; border-radius: var(--r-sm); background: var(--field); font-weight: 700; }
+.menu-btn .ic { flex: none; width: 36px; height: 36px; border-radius: 12px; display: grid; place-items: center; background: var(--card); font-size: 18px; }
+.menu-btn small { display: block; font-weight: 500; color: var(--muted); font-size: 13px; }
+.menu-btn .go { margin-left: auto; color: var(--muted); }
+.seg { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip { font-size: 14px; padding: 6px 12px; border-radius: 99px; background: var(--field); color: var(--ink); white-space: nowrap; }
+.chip.on { background: var(--accent); color: var(--accent-ink); font-weight: 700; }
+.set-line { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 6px 0; }
+.set-line + .set-line { border-top: 1px solid var(--line); padding-top: 10px; margin-top: 4px; }
+.set-line > span { font-size: 15px; }
+
+/* 관사 색 */
+.art { font-weight: 700; }
+.art.der { color: var(--der); } .art.die { color: var(--die); } .art.das { color: var(--das); }
+.kind { font-size: 12px; font-weight: 700; color: var(--muted); background: var(--field); border-radius: 99px; padding: 2px 8px; vertical-align: 3px; }
+
+/* ── 공부 화면 (카드) ── */
+.overlay { position: fixed; inset: 0; z-index: 20; background: var(--bg); display: flex; flex-direction: column;
+  padding: calc(10px + env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom)); }
+.overlay-inner { width: 100%; max-width: 540px; margin: 0 auto; flex: 1; display: flex; flex-direction: column; min-height: 0; }
+.topbar { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.x-btn { flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--card); box-shadow: var(--shadow); color: var(--muted); }
+.x-btn svg { width: 20px; height: 20px; }
+.bar { flex: 1; height: 8px; border-radius: 99px; background: var(--soft); overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--accent); border-radius: 99px; transition: width .3s; }
+.count { flex: none; font-size: 14px; color: var(--muted); font-weight: 600; }
+.stage { flex: 1; position: relative; min-height: 0; perspective: 1400px; }
+.card3d { position: absolute; inset: 0; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.flip { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform .45s cubic-bezier(.2, .7, .2, 1); }
+.card3d.flipped .flip { transform: rotateY(180deg); }
+.face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 28px; background: var(--card);
+  box-shadow: 0 2px 4px rgba(43, 34, 56, .06), 0 14px 34px rgba(106, 79, 187, .12); padding: 22px 20px; display: flex; flex-direction: column; overflow: auto; }
+.face.back { transform: rotateY(180deg); }
+.face .cat { align-self: flex-start; font-size: 12px; font-weight: 700; color: var(--accent); background: var(--soft); border-radius: 99px; padding: 3px 10px; }
+.face .mid { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 6px; padding: 16px 0; }
+.big-word { font-size: clamp(28px, 9vw, 40px); font-weight: 800; line-height: 1.15; letter-spacing: -.01em; overflow-wrap: anywhere; }
+.big-word .art { font-weight: 600; }
+.plural { font-size: 15px; color: var(--muted); }
+.hint { text-align: center; font-size: 13px; color: var(--muted); }
+.say { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--soft); color: var(--accent); margin-top: 6px; }
+.say svg { width: 22px; height: 22px; }
+.say.sm { width: 34px; height: 34px; margin: 0; flex: none; }
+.say.sm svg { width: 18px; height: 18px; }
+.back .ko-big { font-size: clamp(24px, 7vw, 32px); font-weight: 800; line-height: 1.25; text-align: center; margin: 10px 0 4px; }
+.back .de-small { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 18px; font-weight: 700; text-align: center; }
+.back .de-small .pl { display: block; font-size: 13px; font-weight: 500; color: var(--muted); }
+.info { margin-top: 14px; border-radius: var(--r-sm); background: var(--field); padding: 12px 14px; font-size: 15.5px; }
+.info h4 { margin: 0 0 4px; font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: .02em; }
+.info p { margin: 0; }
+.info.ex { display: flex; gap: 10px; align-items: flex-start; background: var(--eosin-soft); }
+.info.ex p { flex: 1; font-style: italic; }
+.info.ex mark { background: none; color: var(--eosin); font-weight: 700; font-style: normal; }
+.swipe-tag { position: absolute; top: 18px; padding: 4px 12px; border-radius: 10px; font-weight: 800; font-size: 18px; opacity: 0; pointer-events: none; z-index: 2; }
+.swipe-tag.know { right: 18px; color: var(--good); border: 3px solid var(--good); transform: rotate(8deg); }
+.swipe-tag.again { left: 18px; color: var(--bad); border: 3px solid var(--bad); transform: rotate(-8deg); }
+.answer-row { display: flex; gap: 10px; margin-top: 16px; }
+.answer-row button { flex: 1; min-height: 58px; border-radius: 18px; font-weight: 800; font-size: 17px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.answer-row .again { background: var(--bad-soft); color: var(--bad); }
+.answer-row .know { background: var(--good-soft); color: var(--good); }
+.done-screen { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 10px; }
+.done-screen .emo { font-size: 64px; line-height: 1; }
+.done-screen h2 { margin: 6px 0 0; font-size: 26px; }
+.done-screen p { margin: 0 0 12px; color: var(--muted); }
+.done-screen .btns { display: grid; gap: 8px; width: 100%; max-width: 320px; }
+
+/* ── 단어 목록 / 추가 (아래에서 올라오는 시트) ── */
+.sheet-bg { position: fixed; inset: 0; z-index: 30; background: rgba(20, 12, 30, .35); display: flex; align-items: flex-end; justify-content: center; }
+.sheet { width: 100%; max-width: 560px; max-height: 92vh; display: flex; flex-direction: column; background: var(--bg); border-radius: 26px 26px 0 0; padding: 12px 16px calc(16px + env(safe-area-inset-bottom)); }
+.sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 4px 0 12px; }
+.sheet-head h2 { margin: 0; font-size: 20px; font-weight: 800; }
+.sheet-body { overflow: auto; flex: 1; min-height: 0; margin: 0 -16px; padding: 0 16px; }
+.search { width: 100%; min-height: 46px; border-radius: 14px; border: 0; background: var(--card); box-shadow: var(--shadow); padding: 0 14px; margin-bottom: 10px; }
+.scroll-chips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 4px; scrollbar-width: none; }
+.scroll-chips::-webkit-scrollbar { display: none; }
+.wl { list-style: none; margin: 0; padding: 0; background: var(--card); border-radius: var(--r); box-shadow: var(--shadow); }
+.wl li { border-top: 1px solid var(--line); }
+.wl li:first-child { border-top: 0; }
+.wl .wl-row { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; padding: 11px 14px; }
+.wl .dot { flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--line); }
+.wl .dot.l { background: var(--eosin); } .wl .dot.k { background: var(--good); }
+.wl .w { flex: 1; min-width: 0; font-weight: 600; }
+.wl .k { color: var(--muted); font-size: 14px; text-align: right; max-width: 45%; }
+.wl .more { padding: 0 14px 12px 33px; font-size: 14.5px; }
+.wl .more p { margin: 4px 0; }
+.wl .more .ex { font-style: italic; color: var(--muted); }
+.wl .more .tools { display: flex; gap: 8px; align-items: center; margin-top: 6px; }
+.legend { display: flex; gap: 14px; font-size: 12px; color: var(--muted); margin: 10px 2px 0; }
+.legend i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; vertical-align: 1px; }
+label.f { display: block; font-size: 13px; font-weight: 700; color: var(--muted); margin: 12px 0 5px; }
+.inp { width: 100%; min-height: 46px; border-radius: 14px; border: 0; background: var(--card); box-shadow: var(--shadow); padding: 10px 14px; }
+textarea.inp { min-height: 70px; resize: vertical; }
+.empty { text-align: center; color: var(--muted); padding: 24px 0; font-size: 15px; }
+
+/* ── 병리 공부 ── */
+.progress-line { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; font-size: 14px; color: var(--muted); }
+.progress-line .bar { height: 6px; }
+.lesson-card { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; background: var(--card); border-radius: var(--r); box-shadow: var(--shadow); padding: 14px; margin-bottom: 10px; }
+.lesson-card .ic { flex: none; width: 50px; height: 50px; border-radius: 16px; display: grid; place-items: center; font-size: 26px; background: var(--soft); }
+.lesson-card .t { flex: 1; min-width: 0; }
+.lesson-card .t b { display: block; font-size: 16.5px; line-height: 1.3; }
+.lesson-card .t span { font-size: 13.5px; color: var(--muted); }
+.badge { flex: none; font-size: 12px; font-weight: 700; border-radius: 99px; padding: 3px 9px; background: var(--field); color: var(--muted); }
+.badge.full { background: var(--good-soft); color: var(--good); }
+.badge.part { background: var(--eosin-soft); color: var(--eosin); }
+.back-link { display: inline-flex; align-items: center; gap: 4px; color: var(--accent); font-weight: 700; font-size: 15px; margin-bottom: 10px; min-height: 36px; }
+.back-link svg { width: 18px; height: 18px; }
+.lesson-head { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.lesson-head .ic { flex: none; width: 58px; height: 58px; border-radius: 18px; display: grid; place-items: center; font-size: 30px; background: var(--card); box-shadow: var(--shadow); }
+.lesson-head h2 { margin: 0; font-size: 23px; line-height: 1.2; font-weight: 800; }
+.lesson-head p { margin: 2px 0 0; color: var(--muted); font-size: 14px; }
+.sec h3 { margin: 0 0 8px; font-size: 18px; font-weight: 800; color: var(--accent); }
+.txt p { margin: 0 0 10px; }
+.txt ul { margin: 0 0 10px; padding-left: 0; list-style: none; }
+.txt li { position: relative; padding-left: 18px; margin: 5px 0; }
+.txt li::before { content: ""; position: absolute; left: 4px; top: .62em; width: 6px; height: 6px; border-radius: 50%; background: var(--eosin); }
+.txt b { color: var(--ink); font-weight: 750; background: linear-gradient(transparent 62%, var(--eosin-soft) 62%); }
+.txt > :last-child { margin-bottom: 0; }
+.ko-box { margin-top: 12px; padding: 12px 14px; border-radius: var(--r-sm); background: var(--field); font-size: 15.5px; color: var(--ink); }
+.ko-box b { background: none; }
+.sec-tools { display: flex; gap: 8px; margin-top: 12px; }
+.sec-tools .chip { display: inline-flex; align-items: center; gap: 5px; }
+.sec-tools .chip svg { width: 16px; height: 16px; }
+.terms { list-style: none; margin: 0; padding: 0; }
+.terms li { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-top: 1px solid var(--line); }
+.terms li:first-child { border-top: 0; }
+.terms .tde { flex: 1; font-weight: 700; }
+.terms .tko { color: var(--muted); font-size: 14px; text-align: right; }
+.add-mini { flex: none; width: 32px; height: 32px; border-radius: 50%; background: var(--soft); color: var(--accent); font-size: 20px; font-weight: 700; line-height: 1; }
+.add-mini.done { background: var(--good-soft); color: var(--good); font-size: 15px; }
+/* 퀴즈 */
+.q-count { font-size: 14px; color: var(--muted); font-weight: 600; margin-bottom: 6px; }
+.q-text { font-size: 20px; font-weight: 800; line-height: 1.35; margin: 0 0 16px; }
+.opts { display: grid; gap: 8px; }
+.opt { text-align: left; padding: 14px 16px; border-radius: var(--r-sm); background: var(--card); box-shadow: var(--shadow); font-size: 16.5px; border: 2px solid transparent; }
+.opt.right { border-color: var(--good); background: var(--good-soft); }
+.opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.opt:disabled { cursor: default; color: var(--ink); }
+.feedback { margin-top: 14px; padding: 12px 14px; border-radius: var(--r-sm); font-size: 15.5px; }
+.feedback.ok { background: var(--good-soft); } .feedback.no { background: var(--bad-soft); }
+.feedback b { display: block; margin-bottom: 2px; }
+
+.toast { position: fixed; left: 50%; bottom: calc(86px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 50; background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 14px; font-size: 15px; box-shadow: var(--shadow); max-width: calc(100% - 32px); text-align: center; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <p class="date" id="today-date"></p>
+    <h1 id="page-title">단어장</h1>
+  </header>
+  <section id="tab-words"></section>
+  <section id="tab-learn" hidden></section>
+</main>
+
+<nav class="tabbar">
+  <button data-tab="words" class="on">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3.5" width="13" height="16" rx="2.5"/><path d="M4 7.5v11a2.5 2.5 0 0 0 2.5 2.5H15"/><path d="M10 9h5M10 12.5h5"/></svg>
+    단어장
+  </button>
+  <button data-tab="learn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3.5l4 2-3.5 7-4-2z"/><path d="M11.2 8.2l1.6.8"/><path d="M14.5 10.5a5 5 0 0 1-2 9"/><path d="M5 20.5h14"/><path d="M8 20.5v-2h7"/></svg>
+    병리 공부
+  </button>
+</nav>
+
+<div id="overlay" class="overlay" hidden><div class="overlay-inner" id="overlay-inner"></div></div>
+<div id="sheet-bg" class="sheet-bg" hidden><div class="sheet" id="sheet"></div></div>
+<div id="toast" class="toast" hidden></div>
+
+<script src="words.js"></script>
+<script src="lessons.js"></script>
+<script>
+'use strict';
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const ICON = {
+  say: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5v5h4l5 4v-13l-5 4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>',
+  x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
+};
+
+// ── 저장 (이 휴대폰 안에만) ──
+const KEY = 'patho-deutsch-v1';
+const INTERVAL = [0, 1, 3, 7, 14, 30, 60]; // 상자 번호별 다음 복습까지 날짜 수
+let S;
+try { S = JSON.parse(localStorage.getItem(KEY)) || {}; } catch { S = {}; }
+S = Object.assign({ prog: {}, day: null, streak: { last: -9, n: 0 }, set: { front: 'de', per: 10 }, mine: [], lessons: {}, tab: 'words' }, S);
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} };
+try { navigator.storage?.persist?.(); } catch {}
+
+const today = () => { const d = new Date(); return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5); };
+const allWords = () => S.mine.concat(WORDS);
+const byId = id => allWords().find(w => w.id === id);
+
+function pickNew(k, exclude = []) {
+  const out = [];
+  for (const w of allWords()) {
+    if (out.length >= k) break;
+    if (!S.prog[w.id] && !exclude.includes(w.id)) out.push(w.id);
+  }
+  return out;
+}
+function ensureDay() {
+  const t = today();
+  if (!S.day || S.day.n !== t) { S.day = { n: t, ids: pickNew(S.set.per), done: [] }; save(); }
+  S.day.ids = S.day.ids.filter(byId);
+}
+const dueIds = () => { const t = today(); return Object.keys(S.prog).filter(id => S.prog[id].d <= t && !S.day.ids.includes(id) && byId(id)); };
+const learnedCount = () => Object.keys(S.prog).filter(byId).length;
+const streakNow = () => (S.streak.last >= today() - 1 ? S.streak.n : 0);
+
+// ── 독일어 읽어 주기 ──
+let deVoice = null;
+function pickVoice() {
+  const vs = speechSynthesis.getVoices().filter(v => /^de(-|_|$)/i.test(v.lang));
+  deVoice = vs.find(v => /de-DE/i.test(v.lang) && /premium|enhanced|anna|helena|petra|google/i.test(v.name)) || vs.find(v => /de-DE/i.test(v.lang)) || vs[0] || null;
+}
+if ('speechSynthesis' in window) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+function speak(text) {
+  if (!('speechSynthesis' in window)) return toast('이 기기에서는 읽어 주기가 안 돼요');
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'de-DE'; if (deVoice) u.voice = deVoice; u.rate = .92;
+  speechSynthesis.speak(u);
+}
+
+// ── 단어 표시 도우미 ──
+const isVerb = w => !w.art && /,/.test(w.pl || '');
+function plural(w) {
+  if (!w.art) return w.pl || '';
+  if (!w.pl) return '';
+  if (w.pl === '-') return 'die ' + w.de;
+  if (w.pl.startsWith('-')) return 'die ' + w.de + w.pl.slice(1);
+  return 'die ' + w.pl;
+}
+const artHtml = w => (w.art ? `<span class="art ${esc(w.art)}">${esc(w.art)}</span> ` : '');
+const wordHtml = w => artHtml(w) + esc(w.de);
+const sayText = w => (w.art ? w.art + ' ' : '') + w.de;
+const kindTag = w => (isVerb(w) ? ' <span class="kind">Verb</span>' : '');
+function markEx(w) {
+  const t = esc(w.ex || '');
+  const stem = w.de.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  try { return t.replace(new RegExp('(' + stem + '\\p{L}*)', 'iu'), '<mark>$1</mark>'); } catch { return t; }
+}
+
+// ── 탭 ──
+function setTab(tab) {
+  S.tab = tab; save();
+  document.querySelectorAll('nav.tabbar button').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
+  $('#tab-words').hidden = tab !== 'words';
+  $('#tab-learn').hidden = tab !== 'learn';
+  $('#page-title').textContent = tab === 'words' ? '단어장' : '병리 공부';
+  tab === 'words' ? renderWords() : renderLearn();
+  window.scrollTo(0, 0);
+}
+document.querySelectorAll('nav.tabbar button').forEach(b => b.onclick = () => setTab(b.dataset.tab));
+
+// ═════════ 단어장 첫 화면 ═════════
+function renderWords() {
+  ensureDay();
+  const ids = S.day.ids, done = S.day.done.filter(id => ids.includes(id)).length, total = ids.length;
+  const due = dueIds().length, learned = learnedCount(), all = allWords().length;
+  const finished = total > 0 && done >= total;
+  const C = 2 * Math.PI * 46, frac = total ? done / total : 0;
+  let title, text, btn;
+  if (!total) { title = '모든 단어를 배웠어요!'; text = '내 단어를 추가하거나 복습을 해 보세요.'; btn = ''; }
+  else if (finished) { title = '오늘 단어 완료 🎉'; text = '내일 새 단어가 나와요. 더 하고 싶으면 아래 버튼을 눌러요.'; btn = `<button class="btn ghost" id="more10">${S.set.per}개 더 하기</button>`; }
+  else if (done) { title = '오늘의 단어'; text = `${total - done}개 남았어요.`; btn = '<button class="btn" id="start">이어서 하기</button>'; }
+  else { title = '오늘의 단어'; text = `새 단어 ${total}개가 기다리고 있어요.`; btn = '<button class="btn" id="start">시작하기</button>'; }
+  $('#tab-words').innerHTML = `
+    <div class="card"><div class="hero">
+      <div class="ring">
+        <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="none" stroke="var(--soft)" stroke-width="8"/>
+        <circle cx="50" cy="50" r="46" fill="none" stroke="var(--accent)" stroke-width="8" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - frac)}"/></svg>
+        <div class="in"><div><b class="num">${done}</b><span>/ ${total}</span></div></div>
+      </div>
+      <div class="hero-text"><h2>${title}</h2><p>${text}</p>${btn}</div>
+    </div></div>
+    <div class="tiles">
+      <div class="tile"><b class="num">${due}</b><span>🔁 복습할 단어</span></div>
+      <div class="tile"><b class="num">${learned}<small>/${all}</small></b><span>📚 배운 단어</span></div>
+      <div class="tile"><b class="num">${streakNow()}</b><span>🔥 연속 일수</span></div>
+    </div>
+    <div class="card list-btns">
+      <button class="menu-btn" id="review" ${due ? '' : 'disabled style="opacity:.55"'}><span class="ic">🔁</span><span>복습하기<small>${due ? `오늘 다시 볼 단어 ${due}개` : '지금은 복습할 단어가 없어요'}</small></span><span class="go">›</span></button>
+      <button class="menu-btn" id="list"><span class="ic">📖</span><span>단어 목록<small>분야별로 보기 · 검색</small></span><span class="go">›</span></button>
+      <button class="menu-btn" id="add"><span class="ic">➕</span><span>내 단어 추가<small>일하다 만난 단어를 넣어요</small></span><span class="go">›</span></button>
+    </div>
+    <div class="card">
+      <h2>설정</h2>
+      <div class="set-line"><span>카드 앞면</span><div class="seg">
+        <button class="chip ${S.set.front === 'de' ? 'on' : ''}" data-front="de">Deutsch</button>
+        <button class="chip ${S.set.front === 'ko' ? 'on' : ''}" data-front="ko">한국어</button></div></div>
+      <div class="set-line"><span>하루 새 단어</span><div class="seg">
+        ${[5, 10, 15, 20].map(n => `<button class="chip ${S.set.per === n ? 'on' : ''}" data-per="${n}">${n}</button>`).join('')}</div></div>
+    </div>`;
+  $('#start')?.addEventListener('click', () => startStudy('today'));
+  $('#more10')?.addEventListener('click', () => {
+    const more = pickNew(S.set.per, S.day.ids);
+    if (!more.length) return toast('새 단어가 더 없어요');
+    S.day.ids.push(...more); save(); startStudy('today');
+  });
+  $('#review').onclick = () => due && startStudy('review');
+  $('#list').onclick = openList;
+  $('#add').onclick = () => openAdd();
+  document.querySelectorAll('[data-front]').forEach(b => b.onclick = () => { S.set.front = b.dataset.front; save(); renderWords(); });
+  document.querySelectorAll('[data-per]').forEach(b => b.onclick = () => {
+    const n = +b.dataset.per; S.set.per = n;
+    // 오늘 아직 시작 전이면 오늘 개수도 바로 맞춤
+    if (!S.day.done.length) S.day.ids = pickNew(n);
+    save(); renderWords();
+  });
+}
+
+// ═════════ 카드 공부 ═════════
+let ST = null; // { mode, queue, total, again:Set, flipped }
+function startStudy(mode) {
+  ensureDay();
+  const queue = mode === 'today' ? S.day.ids.filter(id => !S.day.done.includes(id)) : dueIds();
+  if (!queue.length) return;
+  ST = { mode, queue, total: queue.length, again: new Set(), doneN: 0, flipped: false };
+  $('#overlay').hidden = false; document.body.style.overflow = 'hidden';
+  renderCard();
+}
+function closeStudy() {
+  window.speechSynthesis?.cancel();
+  $('#card3d')?._cleanup?.();
+  $('#overlay').hidden = true; document.body.style.overflow = ''; ST = null; renderWords();
+}
+function renderCard() {
+  $('#card3d')?._cleanup?.();
+  const inner = $('#overlay-inner');
+  if (!ST.queue.length) return renderDone();
+  const w = byId(ST.queue[0]);
+  if (!w) { ST.queue.shift(); return renderCard(); }
+  const deFront = S.set.front === 'de';
+  const pl = plural(w);
+  const cat = `<span class="cat">${esc(w.catKo || w.cat)}</span>`;
+  const deSide = `${cat}<div class="mid">
+      <div class="big-word">${wordHtml(w)}${kindTag(w)}</div>
+      ${pl ? `<div class="plural">${isVerb(w) ? '' : 'Pl. '}${esc(pl)}</div>` : ''}
+      <button class="say" data-say="${esc(sayText(w))}" aria-label="듣기">${ICON.say}</button>
+    </div><div class="hint">탭해서 뜻 보기 · 옆으로 밀기</div>`;
+  const koSide = `${cat}<div class="mid"><div class="big-word">${esc(w.ko)}</div></div><div class="hint">독일어로 뭐였지? 탭해서 확인</div>`;
+  const backSide = `${cat}
+    ${deFront ? `<div class="ko-big">${esc(w.ko)}</div>` : ''}
+    <div class="de-small" style="${deFront ? '' : 'margin-top:14px;font-size:24px'}"><span>${wordHtml(w)}${pl ? `<span class="pl">${isVerb(w) ? '' : 'Pl. '}${esc(pl)}</span>` : ''}</span>
+      <button class="say sm" data-say="${esc(sayText(w))}" aria-label="듣기">${ICON.say}</button></div>
+    ${deFront ? '' : `<div class="ko-big" style="font-size:18px;color:var(--muted);font-weight:600">${esc(w.ko)}</div>`}
+    ${w.def ? `<div class="info"><h4>ERKLÄRUNG</h4><p>${esc(w.def)}</p></div>` : ''}
+    ${w.ex ? `<div class="info ex"><p>${markEx(w)}</p><button class="say sm" data-say="${esc(w.ex)}" aria-label="예문 듣기">${ICON.say}</button></div>` : ''}`;
+  inner.innerHTML = `
+    <div class="topbar">
+      <button class="x-btn" id="close" aria-label="닫기">${ICON.x}</button>
+      <div class="bar"><i style="width:${(ST.doneN / ST.total) * 100}%"></i></div>
+      <span class="count num">${ST.doneN} / ${ST.total}</span>
+    </div>
+    <div class="stage">
+      <div class="card3d" id="card3d">
+        <div class="swipe-tag know">알아요</div><div class="swipe-tag again">다시</div>
+        <div class="flip"><div class="face front">${deFront ? deSide : koSide}</div><div class="face back">${backSide}</div></div>
+      </div>
+    </div>
+    <div class="answer-row">
+      <button class="again" id="b-again">🔁 다시 볼래요</button>
+      <button class="know" id="b-know">✓ 알아요</button>
+    </div>`;
+  $('#close').onclick = closeStudy;
+  $('#b-again').onclick = () => fly('again');
+  $('#b-know').onclick = () => fly('know');
+  inner.querySelectorAll('[data-say]').forEach(b => b.onclick = e => { e.stopPropagation(); speak(b.dataset.say); });
+  bindSwipe($('#card3d'));
+}
+function bindSwipe(el) {
+  let sx = null, sy = 0, dx = 0, moved = false;
+  const tags = { know: el.querySelector('.swipe-tag.know'), again: el.querySelector('.swipe-tag.again') };
+  el.addEventListener('pointerdown', e => {
+    if (e.target.closest('button')) return;
+    sx = e.clientX; sy = e.clientY; dx = 0; moved = false; el.style.transition = 'none';
+  });
+  const move = e => {
+    if (sx === null) return;
+    dx = e.clientX - sx;
+    if (!moved && Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(e.clientY - sy)) moved = true;
+    if (!moved) return;
+    el.style.transform = `translateX(${dx}px) rotate(${dx / 22}deg)`;
+    tags.know.style.opacity = Math.max(0, Math.min(1, dx / 90));
+    tags.again.style.opacity = Math.max(0, Math.min(1, -dx / 90));
+  };
+  const up = () => {
+    if (sx === null) return;
+    sx = null;
+    if (moved && Math.abs(dx) > 90) { fly(dx > 0 ? 'know' : 'again'); }
+    else { el.style.transition = 'transform .25s'; el.style.transform = ''; tags.know.style.opacity = tags.again.style.opacity = 0; }
+    setTimeout(() => { moved = false; }, 0);
+  };
+  window.addEventListener('pointermove', move);
+  window.addEventListener('pointerup', up, { once: false });
+  window.addEventListener('pointercancel', up);
+  el.addEventListener('click', e => {
+    if (moved || e.target.closest('button')) return;
+    el.classList.toggle('flipped');
+  });
+  // 다음 카드 그릴 때 리스너 정리
+  el._cleanup = () => { window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); };
+}
+function fly(kind) {
+  const el = $('#card3d');
+  if (!el || el._gone) return;
+  el._gone = true;
+  el._cleanup?.();
+  el.style.transition = 'transform .28s ease-in, opacity .28s';
+  el.style.transform = `translateX(${kind === 'know' ? 130 : -130}%) rotate(${kind === 'know' ? 14 : -14}deg)`;
+  el.style.opacity = '0';
+  el.querySelector('.swipe-tag.' + kind).style.opacity = 1;
+  setTimeout(() => rate(kind), 220);
+}
+function rate(kind) {
+  const id = ST.queue.shift(), t = today();
+  const p = S.prog[id] || { b: 0, d: t };
+  if (kind === 'know') {
+    const b = ST.again.has(id) ? 1 : Math.min((p.b || 0) + 1, INTERVAL.length - 1);
+    S.prog[id] = { b, d: t + INTERVAL[b] };
+    ST.doneN++;
+    if (ST.mode === 'today' && !S.day.done.includes(id)) S.day.done.push(id);
+  } else {
+    ST.again.add(id);
+    S.prog[id] = { b: 0, d: t };
+    ST.queue.push(id);
+  }
+  save();
+  renderCard();
+}
+function renderDone() {
+  if (ST.mode === 'today') {
+    const t = today();
+    if (S.streak.last !== t) { S.streak.n = S.streak.last === t - 1 ? S.streak.n + 1 : 1; S.streak.last = t; save(); }
+  }
+  const due = dueIds().length;
+  const inner = $('#overlay-inner');
+  inner.innerHTML = `
+    <div class="topbar"><button class="x-btn" id="close" aria-label="닫기">${ICON.x}</button><div class="bar"><i style="width:100%"></i></div><span class="count num">${ST.total} / ${ST.total}</span></div>
+    <div class="done-screen">
+      <div class="emo">${ST.mode === 'today' ? '🎉' : '💪'}</div>
+      <h2>${ST.mode === 'today' ? '오늘 단어 끝!' : '복습 끝!'}</h2>
+      <p>${ST.total}개 · ${ST.again.size ? `다시 본 단어 ${ST.again.size}개` : '한 번에 다 맞혔어요'}${ST.mode === 'today' ? ` · 🔥 ${streakNow()}일째` : ''}</p>
+      <div class="btns">
+        ${due ? `<button class="btn" id="go-review">복습하기 (${due})</button>` : ''}
+        ${ST.mode === 'today' ? `<button class="btn ghost" id="go-more">${S.set.per}개 더 하기</button>` : ''}
+        <button class="btn ghost" id="go-close">닫기</button>
+      </div>
+    </div>`;
+  $('#close').onclick = $('#go-close').onclick = closeStudy;
+  $('#go-review')?.addEventListener('click', () => startStudy('review'));
+  $('#go-more')?.addEventListener('click', () => {
+    const more = pickNew(S.set.per, S.day.ids);
+    if (!more.length) return toast('새 단어가 더 없어요');
+    S.day.ids.push(...more); save(); startStudy('today');
+  });
+}
+
+// ═════════ 단어 목록 ═════════
+let LF = { q: '', cat: '' };
+function openSheet(html) { $('#sheet').innerHTML = html; $('#sheet-bg').hidden = false; document.body.style.overflow = 'hidden'; }
+function closeSheet() { $('#sheet-bg').hidden = true; document.body.style.overflow = ''; if (S.tab === 'words') renderWords(); }
+$('#sheet-bg').addEventListener('click', e => { if (e.target.id === 'sheet-bg') closeSheet(); });
+function openList() {
+  const cats = [];
+  for (const w of allWords()) if (!cats.some(c => c[0] === w.cat)) cats.push([w.cat, w.catKo]);
+  openSheet(`
+    <div class="sheet-head"><h2>단어 목록</h2><button class="x-btn" id="sh-close" aria-label="닫기">${ICON.x}</button></div>
+    <input class="search" id="wl-q" type="search" placeholder="독일어나 한국어로 찾기" value="${esc(LF.q)}" autocomplete="off">
+    <div class="scroll-chips" id="wl-cats">
+      <button class="chip ${LF.cat ? '' : 'on'}" data-cat="">전체</button>
+      ${cats.map(([c, k]) => `<button class="chip ${LF.cat === c ? 'on' : ''}" data-cat="${esc(c)}">${esc(k || c)}</button>`).join('')}
+    </div>
+    <div class="sheet-body"><ul class="wl" id="wl"></ul>
+      <div class="legend"><span><i style="background:var(--line)"></i>새 단어</span><span><i style="background:var(--eosin)"></i>외우는 중</span><span><i style="background:var(--good)"></i>잘 앎</span></div>
+    </div>`);
+  $('#sh-close').onclick = closeSheet;
+  $('#wl-q').oninput = e => { LF.q = e.target.value; drawList(); };
+  $('#wl-cats').onclick = e => {
+    const b = e.target.closest('[data-cat]'); if (!b) return;
+    LF.cat = b.dataset.cat;
+    document.querySelectorAll('#wl-cats .chip').forEach(c => c.classList.toggle('on', c === b));
+    drawList();
+  };
+  drawList();
+}
+function drawList() {
+  const q = LF.q.trim().toLowerCase();
+  const list = allWords().filter(w => (!LF.cat || w.cat === LF.cat) && (!q || (w.de + ' ' + w.ko + ' ' + (w.art || '')).toLowerCase().includes(q)));
+  const ul = $('#wl');
+  if (!list.length) { ul.outerHTML = '<ul class="wl" id="wl"><li class="empty">찾는 단어가 없어요</li></ul>'; return; }
+  ul.innerHTML = list.slice(0, 400).map(w => {
+    const p = S.prog[w.id], cls = !p ? '' : p.b >= 3 ? 'k' : 'l';
+    return `<li data-id="${esc(w.id)}"><button class="wl-row"><span class="dot ${cls}"></span><span class="w">${wordHtml(w)}</span><span class="k">${esc(w.ko)}</span></button></li>`;
+  }).join('');
+  ul.onclick = e => {
+    const li = e.target.closest('li[data-id]'); if (!li) return;
+    if (e.target.closest('[data-say]')) return speak(e.target.closest('[data-say]').dataset.say);
+    if (e.target.closest('[data-del]')) {
+      const id = li.dataset.id;
+      if (!confirm('이 단어를 지울까요?')) return;
+      S.mine = S.mine.filter(m => m.id !== id); delete S.prog[id];
+      if (S.day) { S.day.ids = S.day.ids.filter(x => x !== id); S.day.done = S.day.done.filter(x => x !== id); }
+      save(); return drawList();
+    }
+    if (!e.target.closest('.wl-row')) return;
+    const open = li.querySelector('.more');
+    if (open) return open.remove();
+    const w = byId(li.dataset.id), pl = plural(w);
+    li.insertAdjacentHTML('beforeend', `<div class="more">
+      ${pl ? `<p class="sub">${isVerb(w) ? '' : 'Pl. '}${esc(pl)}</p>` : ''}
+      ${w.def ? `<p>${esc(w.def)}</p>` : ''}
+      ${w.ex ? `<p class="ex">${esc(w.ex)}</p>` : ''}
+      <div class="tools"><button class="say sm" data-say="${esc(sayText(w))}" aria-label="듣기">${ICON.say}</button>
+      ${w.ex ? `<button class="chip" data-say="${esc(w.ex)}">예문 듣기</button>` : ''}
+      ${w.mine ? '<button class="chip" data-del style="margin-left:auto;color:var(--bad)">지우기</button>' : ''}</div></div>`);
+  };
+}
+
+// ═════════ 내 단어 추가 ═════════
+function addMine({ art = '', de, ko, def = '', ex = '' }) {
+  de = de.trim(); ko = ko.trim();
+  if (!de || !ko) return false;
+  if (allWords().some(w => w.de.toLowerCase() === de.toLowerCase())) { toast('이미 단어장에 있는 단어예요'); return false; }
+  const w = { id: 'm' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5), art, de, pl: '', ko, def: def.trim(), ex: ex.trim(), cat: 'Meine Wörter', catKo: '내 단어', mine: true };
+  S.mine.push(w); save();
+  return true;
+}
+function openAdd() {
+  openSheet(`
+    <div class="sheet-head"><h2>내 단어 추가</h2><button class="x-btn" id="sh-close" aria-label="닫기">${ICON.x}</button></div>
+    <div class="sheet-body">
+      <p class="sub" style="margin:0">추가한 단어는 아직 안 배운 단어 중 맨 앞에 들어가요 (다음 새 단어로 나와요).</p>
+      <label class="f">관사</label>
+      <div class="seg" id="a-art">${['', 'der', 'die', 'das'].map(a => `<button class="chip ${a ? '' : 'on'}" data-a="${a}">${a || '없음'}</button>`).join('')}</div>
+      <label class="f" for="a-de">독일어</label><input class="inp" id="a-de" placeholder="z. B. Paraffinschnitt" autocomplete="off" autocapitalize="off">
+      <label class="f" for="a-ko">한국어 뜻</label><input class="inp" id="a-ko" placeholder="예: 파라핀 절편" autocomplete="off">
+      <label class="f" for="a-def">설명 (선택)</label><textarea class="inp" id="a-def"></textarea>
+      <label class="f" for="a-ex">예문 (선택)</label><textarea class="inp" id="a-ex"></textarea>
+      <button class="btn wide" id="a-save" style="margin-top:16px">저장</button>
+    </div>`);
+  let art = '';
+  $('#sh-close').onclick = closeSheet;
+  $('#a-art').onclick = e => { const b = e.target.closest('[data-a]'); if (!b) return; art = b.dataset.a; document.querySelectorAll('#a-art .chip').forEach(c => c.classList.toggle('on', c === b)); };
+  $('#a-save').onclick = () => {
+    const de = $('#a-de').value, ko = $('#a-ko').value;
+    if (!de.trim() || !ko.trim()) return toast('독일어와 한국어 뜻을 적어 주세요');
+    if (addMine({ art, de, ko, def: $('#a-def').value, ex: $('#a-ex').value })) { toast('저장했어요'); closeSheet(); }
+  };
+  setTimeout(() => $('#a-de').focus(), 50);
+}
+
+// ═════════ 병리 공부 ═════════
+let LV = { type: 'list' };
+function md(text) {
+  const inline = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+  return text.trim().split(/\n\s*\n/).map(block => {
+    const lines = block.split('\n').map(l => l.trim()).filter(Boolean);
+    let html = '', list = [];
+    const flush = () => { if (list.length) { html += '<ul>' + list.map(l => `<li>${inline(l)}</li>`).join('') + '</ul>'; list = []; } };
+    for (const l of lines) {
+      if (l.startsWith('• ')) list.push(l.slice(2));
+      else { flush(); html += `<p>${inline(l)}</p>`; }
+    }
+    flush();
+    return html;
+  }).join('');
+}
+const plain = text => text.replace(/\*\*/g, '').replace(/^• /gm, '').replace(/→/g, ', ');
+function lessonBadge(l) {
+  const r = S.lessons[l.id];
+  if (r?.score != null) return `<span class="badge ${r.score === r.total ? 'full' : 'part'}">퀴즈 ${r.score}/${r.total}</span>`;
+  if (r?.read) return '<span class="badge">읽음</span>';
+  return '';
+}
+function renderLearn() {
+  const box = $('#tab-learn');
+  if (LV.type === 'lesson') return renderLesson(box);
+  if (LV.type === 'quiz') return renderQuiz(box);
+  const doneN = LESSONS.filter(l => S.lessons[l.id]?.score != null).length;
+  box.innerHTML = `
+    <div class="progress-line"><span>퀴즈 끝낸 장 <b class="num">${doneN}</b> / ${LESSONS.length}</span><div class="bar"><i style="width:${(doneN / LESSONS.length) * 100}%"></i></div></div>
+    ${LESSONS.map(l => `<button class="lesson-card" data-l="${l.id}"><span class="ic">${l.icon}</span><span class="t"><b>${esc(l.de)}</b><span>${esc(l.ko)}</span></span>${lessonBadge(l)}</button>`).join('')}
+    <p class="sub" style="text-align:center;margin-top:16px">본문은 독일어(B2), 버튼을 누르면 한국어 번역이 나와요.</p>`;
+  box.querySelectorAll('[data-l]').forEach(b => b.onclick = () => { LV = { type: 'lesson', id: b.dataset.l }; renderLearn(); window.scrollTo(0, 0); });
+}
+function renderLesson(box) {
+  const l = LESSONS.find(x => x.id === LV.id);
+  S.lessons[l.id] = Object.assign({}, S.lessons[l.id], { read: true }); save();
+  const known = new Set(allWords().map(w => w.de.toLowerCase()));
+  box.innerHTML = `
+    <button class="back-link" id="lb">${ICON.back} 목록</button>
+    <div class="lesson-head"><span class="ic">${l.icon}</span><div><h2>${esc(l.de)}</h2><p>${esc(l.ko)}</p></div></div>
+    ${l.sections.map((s, i) => `<div class="card sec">
+      <h3>${esc(s.h)}</h3>
+      <div class="txt">${md(s.de)}</div>
+      <div class="ko-box txt" id="ko${i}" hidden>${md(s.ko)}</div>
+      <div class="sec-tools">
+        <button class="chip" data-ko="${i}">🇰🇷 번역 보기</button>
+        <button class="chip" data-read="${i}">${ICON.say} 듣기</button>
+      </div></div>`).join('')}
+    <div class="card"><h2>핵심 용어</h2><ul class="terms">
+      ${l.terms.map(([de, ko], i) => { const sp = splitTerm(de); const has = known.has(sp.de.toLowerCase());
+        return `<li><span class="tde">${sp.art ? `<span class="art ${sp.art}">${sp.art}</span> ` : ''}${esc(sp.de)}</span><span class="tko">${esc(ko)}</span>
+        <button class="add-mini ${has ? 'done' : ''}" data-t="${i}" aria-label="단어장에 넣기">${has ? '✓' : '+'}</button></li>`; }).join('')}
+    </ul><p class="sub" style="margin:8px 0 0">+ 를 누르면 단어장에 넣어요.</p></div>
+    <button class="btn wide" id="lq">퀴즈 풀기 (${l.quiz.length}문제)</button>`;
+  $('#lb').onclick = () => { LV = { type: 'list' }; renderLearn(); window.scrollTo(0, 0); };
+  $('#lq').onclick = () => { LV = { type: 'quiz', id: l.id, i: 0, score: 0, picked: null }; renderLearn(); window.scrollTo(0, 0); };
+  box.querySelectorAll('[data-ko]').forEach(b => b.onclick = () => {
+    const k = $('#ko' + b.dataset.ko); k.hidden = !k.hidden;
+    b.textContent = k.hidden ? '🇰🇷 번역 보기' : '🇰🇷 번역 숨기기';
+  });
+  box.querySelectorAll('[data-read]').forEach(b => b.onclick = () => speak(plain(l.sections[+b.dataset.read].de)));
+  box.querySelectorAll('[data-t]').forEach(b => b.onclick = () => {
+    if (b.classList.contains('done')) return toast('이미 단어장에 있어요');
+    const [de, ko] = l.terms[+b.dataset.t], sp = splitTerm(de);
+    if (addMine({ art: sp.art, de: sp.de, ko, def: '', ex: '' })) { b.classList.add('done'); b.textContent = '✓'; toast('단어장에 넣었어요'); }
+  });
+}
+function splitTerm(t) {
+  const m = t.match(/^(der|die|das)\s+(.+)$/);
+  return m ? { art: m[1], de: m[2] } : { art: '', de: t };
+}
+function renderQuiz(box) {
+  const l = LESSONS.find(x => x.id === LV.id);
+  if (LV.i >= l.quiz.length) {
+    const prev = S.lessons[l.id] || {};
+    const best = Math.max(prev.score ?? 0, LV.score);
+    S.lessons[l.id] = Object.assign({}, prev, { score: best, total: l.quiz.length }); save();
+    const perfect = LV.score === l.quiz.length;
+    box.innerHTML = `
+      <button class="back-link" id="lb">${ICON.back} 목록</button>
+      <div class="card" style="text-align:center;padding:28px 16px">
+        <div style="font-size:56px;line-height:1">${perfect ? '🏆' : LV.score >= l.quiz.length / 2 ? '👏' : '📚'}</div>
+        <h2 style="font-size:24px;margin:12px 0 4px">${LV.score} / ${l.quiz.length}</h2>
+        <p class="sub" style="margin:0 0 18px">${perfect ? 'Perfekt! 다 맞혔어요.' : LV.score >= l.quiz.length / 2 ? 'Gut gemacht! 틀린 부분은 본문을 다시 봐요.' : '본문을 한 번 더 읽고 다시 풀어 봐요.'}</p>
+        <div class="row"><button class="btn ghost" id="qa">다시 풀기</button><button class="btn" id="qr">본문 보기</button></div>
+      </div>`;
+    $('#lb').onclick = () => { LV = { type: 'list' }; renderLearn(); };
+    $('#qa').onclick = () => { LV = { type: 'quiz', id: l.id, i: 0, score: 0, picked: null }; renderLearn(); };
+    $('#qr').onclick = () => { LV = { type: 'lesson', id: l.id }; renderLearn(); window.scrollTo(0, 0); };
+    return;
+  }
+  const q = l.quiz[LV.i], answered = LV.picked != null;
+  // 보기 순서는 문제마다 섞음 (정답 위치를 외우지 않게)
+  if (!LV.perm || LV.perm.i !== LV.i) LV.perm = { i: LV.i, o: q.a.map((_, k) => k).sort(() => Math.random() - .5) };
+  box.innerHTML = `
+    <button class="back-link" id="lb">${ICON.back} ${esc(l.de)}</button>
+    <div class="q-count num">${l.icon} 문제 ${LV.i + 1} / ${l.quiz.length}</div>
+    <div class="bar" style="margin-bottom:16px"><i style="width:${(LV.i / l.quiz.length) * 100}%"></i></div>
+    <p class="q-text">${esc(q.q)}</p>
+    <div class="opts">${LV.perm.o.map(i => { const a = q.a[i];
+      const cls = !answered ? '' : i === q.c ? 'right' : i === LV.picked ? 'wrong' : '';
+      return `<button class="opt ${cls}" data-o="${i}" ${answered ? 'disabled' : ''}>${esc(a)}</button>`; }).join('')}</div>
+    ${answered ? `<div class="feedback ${LV.picked === q.c ? 'ok' : 'no'}"><b>${LV.picked === q.c ? '✓ Richtig!' : '✗ Leider falsch'}</b>${esc(q.ex)}</div>
+      <button class="btn wide" id="qn" style="margin-top:14px">${LV.i + 1 < l.quiz.length ? '다음 문제' : '결과 보기'}</button>` : ''}`;
+  $('#lb').onclick = () => { LV = { type: 'lesson', id: l.id }; renderLearn(); window.scrollTo(0, 0); };
+  box.querySelectorAll('[data-o]').forEach(b => b.onclick = () => {
+    LV.picked = +b.dataset.o; if (LV.picked === q.c) LV.score++;
+    renderLearn();
+  });
+  $('#qn')?.addEventListener('click', () => { LV.i++; LV.picked = null; renderLearn(); window.scrollTo(0, 0); });
+}
+
+// ── 기타 ──
+let toastT;
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => (t.hidden = true), 2000); }
+
+$('#today-date').textContent = new Date().toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'long' });
+// 자정이 지나서 다시 열면 새 날 단어로
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && !ST && S.day && S.day.n !== today()) {
+    $('#today-date').textContent = new Date().toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'long' });
+    if (S.tab === 'words') renderWords();
+  }
+});
+setTab(S.tab === 'learn' ? 'learn' : 'words');
+
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).catch(() => {});
+}
+</script>
+</body>
+</html>
