@@ -49,6 +49,7 @@ h1 { font-size: 30px; font-weight: 800; line-height: 1.15; letter-spacing: -.02e
 .sub { color: var(--muted); font-size: 14px; }
 .btn { flex: none; white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 48px; padding: 0 20px; border-radius: 14px; background: var(--accent); color: var(--accent-ink); font-weight: 700; }
 .btn.ghost { background: var(--field); color: var(--ink); }
+.btn svg { width: 20px; height: 20px; flex: none; }
 .btn.wide { width: 100%; }
 .btn.small { min-height: 38px; padding: 0 14px; font-size: 15px; border-radius: 12px; }
 .row { display: flex; gap: 8px; }
@@ -97,7 +98,7 @@ nav.tabbar button.on { color: var(--accent); font-weight: 600; }
 /* ── 공부 화면 (카드) ── */
 .overlay { position: fixed; inset: 0; z-index: 20; background: var(--bg); display: flex; flex-direction: column;
   padding: calc(10px + env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom)); }
-.overlay-inner { width: 100%; max-width: 540px; margin: 0 auto; flex: 1; display: flex; flex-direction: column; min-height: 0; }
+.overlay-inner { width: 100%; max-width: 540px; margin: 0 auto; flex: 1; display: flex; flex-direction: column; min-height: 0; overflow-y: auto; }
 .topbar { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
 .x-btn { flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--card); box-shadow: var(--shadow); color: var(--muted); }
 .x-btn svg { width: 20px; height: 20px; }
@@ -111,7 +112,7 @@ nav.tabbar button.on { color: var(--accent); font-weight: 600; }
 .face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 28px; background: var(--card);
   box-shadow: 0 2px 4px rgba(43, 34, 56, .06), 0 14px 34px rgba(106, 79, 187, .12); padding: 22px 20px; display: flex; flex-direction: column; overflow: auto; }
 .face.back { transform: rotateY(180deg); }
-.face .cat { align-self: flex-start; font-size: 12px; font-weight: 700; color: var(--accent); background: var(--soft); border-radius: 99px; padding: 3px 10px; }
+.face .cat, .pq .cat { align-self: flex-start; font-size: 12px; font-weight: 700; color: var(--accent); background: var(--soft); border-radius: 99px; padding: 3px 10px; }
 .face .mid { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 6px; padding: 16px 0; }
 .big-word { font-size: clamp(28px, 9vw, 40px); font-weight: 800; line-height: 1.15; letter-spacing: -.01em; overflow-wrap: anywhere; }
 .big-word .art { font-weight: 600; }
@@ -168,6 +169,34 @@ nav.tabbar button.on { color: var(--accent); font-weight: 600; }
 .wl .more { padding: 0 14px 12px 33px; font-size: 14.5px; }
 .wl .more p { margin: 4px 0; }
 .wl .more .ex { font-style: italic; color: var(--muted); }
+/* ── 연습: 관사 퀴즈 · 빈칸 채우기 ── */
+.pq { flex: 1; min-height: 230px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; position: relative;
+  background: var(--card); border-radius: 28px; box-shadow: 0 2px 4px rgba(43, 34, 56, .06), 0 14px 34px rgba(106, 79, 187, .12); padding: 22px 20px; }
+.pq .cat { position: absolute; top: 18px; left: 18px; }
+.pq-word { font-size: clamp(30px, 10vw, 42px); font-weight: 800; line-height: 1.15; overflow-wrap: anywhere; }
+.blank-art { color: var(--muted); font-weight: 600; letter-spacing: .05em; }
+.pq-ko { color: var(--muted); font-size: 16px; }
+.art-btns { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 16px; }
+.art-btn { min-height: 76px; border-radius: 20px; font-size: 24px; font-weight: 800; background: var(--card); box-shadow: var(--shadow); border: 3px solid transparent; }
+.art-btn.der { color: var(--der); } .art-btn.die { color: var(--die); } .art-btn.das { color: var(--das); }
+.art-btn.right { border-color: var(--good); background: var(--good-soft); }
+.art-btn.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.art-btn.dim { opacity: .4; }
+.art-btn:disabled { cursor: default; }
+.cz { margin-bottom: 14px; }
+.cz-sent { font-size: 19px; line-height: 1.65; margin: 0 0 12px; }
+.gap { display: inline-block; min-width: 96px; border-bottom: 3px solid var(--accent); margin: 0 3px; color: var(--accent); font-weight: 700; }
+.cz-sent mark { background: none; font-weight: 800; } .cz-sent mark.ok { color: var(--good); } .cz-sent mark.no { color: var(--bad); }
+.cz-foot { display: flex; align-items: center; gap: 10px; }
+.cz-ko { flex: 1; margin: 0; color: var(--muted); font-size: 15px; }
+.done-screen.pd { justify-content: flex-start; padding: 24px 0 8px; }
+.done-screen .wl { width: 100%; max-width: 380px; text-align: left; margin-bottom: 12px; }
+/* 본문 단어 탭 */
+.tw { cursor: pointer; border-radius: 4px; }
+.tw.k { text-decoration: underline dotted color-mix(in srgb, var(--accent) 55%, transparent); text-decoration-thickness: 1.5px; text-underline-offset: 4px; }
+.tw.on { background: var(--soft); box-shadow: 0 0 0 2px var(--soft); }
+.pop-ko { font-size: 22px; font-weight: 800; margin: 2px 0 6px; }
+.tap-tip { font-size: 13.5px; color: var(--muted); margin: -4px 0 12px; }
 .wl .more .tools { display: flex; gap: 8px; align-items: center; margin-top: 6px; }
 .legend { display: flex; gap: 14px; font-size: 12px; color: var(--muted); margin: 10px 2px 0; }
 .legend i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; vertical-align: 1px; }
@@ -370,6 +399,10 @@ function renderWords() {
       <div class="tile"><b class="num">${streakNow()}</b><span>🔥 연속 일수</span></div>
     </div>
     <div class="card list-btns">
+      <button class="menu-btn" id="p-art"><span class="ic">🎯</span><span>der · die · das 퀴즈<small>관사 맞히기 20문제</small></span><span class="go">›</span></button>
+      <button class="menu-btn" id="p-cloze"><span class="ic">✏️</span><span>빈칸 채우기<small>예문 속 단어 맞히기 10문제</small></span><span class="go">›</span></button>
+    </div>
+    <div class="card list-btns">
       <button class="menu-btn" id="review" ${due ? '' : 'disabled style="opacity:.55"'}><span class="ic">🔁</span><span>복습하기<small>${due ? `오늘 다시 볼 단어 ${due}개` : '지금은 복습할 단어가 없어요'}</small></span><span class="go">›</span></button>
       <button class="menu-btn" id="list"><span class="ic">📖</span><span>단어 목록<small>분야별로 보기 · 검색</small></span><span class="go">›</span></button>
       <button class="menu-btn" id="add"><span class="ic">➕</span><span>내 단어 추가<small>일하다 만난 단어를 넣어요</small></span><span class="go">›</span></button>
@@ -390,6 +423,8 @@ function renderWords() {
   });
   $('#review').onclick = () => due && startStudy('review');
   $('#list').onclick = openList;
+  $('#p-art').onclick = startArticle;
+  $('#p-cloze').onclick = () => startCloze(S.set.cloze || 'choice');
   $('#add').onclick = () => openAdd();
   document.querySelectorAll('[data-front]').forEach(b => b.onclick = () => { S.set.front = b.dataset.front; save(); renderWords(); });
   document.querySelectorAll('[data-per]').forEach(b => b.onclick = () => {
@@ -547,6 +582,144 @@ function renderDone() {
   });
 }
 
+// ═════════ 연습: 관사 퀴즈 · 빈칸 채우기 ═════════
+let PR = null;
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const isNoun = w => ['der', 'die', 'das'].includes(w.art) && !w.de.includes(' ');
+const norm = s => s.trim().toLowerCase().replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss');
+// 배운 단어가 충분하면 배운 단어에서, 아니면 전체 단어에서. 전에 틀린 단어를 먼저(최대 절반)
+function practicePool(ok, n, missKey) {
+  const all = allWords().filter(ok);
+  const learned = all.filter(w => S.prog[w.id]);
+  const base = learned.length >= n ? learned : all;
+  const miss = S[missKey] || {};
+  const missed = shuffle(base.filter(w => miss[w.id] > 0)).slice(0, Math.ceil(n / 2));
+  const rest = shuffle(base.filter(w => !missed.includes(w)));
+  return { words: missed.concat(rest).slice(0, n), fromLearned: base === learned };
+}
+function bumpMiss(key, id, d) { const m = S[key] = S[key] || {}; m[id] = Math.max(0, (m[id] || 0) + d); if (!m[id]) delete m[id]; }
+function openOverlay() { $('#overlay').hidden = false; document.body.style.overflow = 'hidden'; }
+function closePractice() { PR = null; closeStudy(); }
+function practiceTop() {
+  const n = PR.words.length;
+  return `<div class="topbar"><button class="x-btn" id="close" aria-label="닫기">${ICON.x}</button>
+    <div class="bar"><i style="width:${(PR.i / n) * 100}%"></i></div><span class="count num">${PR.i} / ${n}</span></div>`;
+}
+function wireCommon(inner) {
+  $('#close').onclick = closePractice;
+  inner.querySelectorAll('[data-say]').forEach(b => b.onclick = () => speak(b.dataset.say));
+}
+
+// 관사 퀴즈
+function startArticle() {
+  const { words, fromLearned } = practicePool(isNoun, 20, 'artMiss');
+  if (!words.length) return toast('연습할 단어가 없어요');
+  PR = { kind: 'art', words, i: 0, score: 0, picked: null, wrong: [], fromLearned };
+  openOverlay(); renderArticle();
+}
+function renderArticle() {
+  const inner = $('#overlay-inner');
+  if (PR.i >= PR.words.length) return renderPracticeDone();
+  const w = PR.words[PR.i], ans = PR.picked != null;
+  inner.innerHTML = practiceTop() + `
+    <div class="pq">
+      <span class="cat">${esc(w.catKo)}</span>
+      <div class="pq-word">${ans ? `<span class="art ${w.art}">${w.art}</span> ` : '<span class="blank-art">___</span> '}${esc(w.de)}</div>
+      <div class="pq-ko">${esc(w.ko)}</div>
+      ${ans ? `<button class="say" data-say="${esc(sayText(w))}" aria-label="듣기">${ICON.say}</button>` : ''}
+      ${!PR.fromLearned && PR.i === 0 && !ans ? '<p class="hint" style="margin:10px 0 0">아직 배운 단어가 적어서 전체 단어에서 나와요</p>' : ''}
+    </div>
+    <div class="art-btns">${['der', 'die', 'das'].map(a => {
+      const cls = !ans ? '' : a === w.art ? 'right' : a === PR.picked ? 'wrong' : 'dim';
+      return `<button class="art-btn ${a} ${cls}" data-a="${a}" ${ans ? 'disabled' : ''}>${a}</button>`; }).join('')}</div>
+    ${ans && PR.picked !== w.art ? '<button class="btn wide" id="next" style="margin-top:12px">다음</button>' : '<div style="height:60px;flex:none"></div>'}`;
+  wireCommon(inner);
+  inner.querySelectorAll('[data-a]').forEach(b => b.onclick = () => {
+    PR.picked = b.dataset.a;
+    const ok = PR.picked === w.art;
+    if (ok) { PR.score++; bumpMiss('artMiss', w.id, -1); } else { PR.wrong.push(w); bumpMiss('artMiss', w.id, 1); }
+    save(); renderArticle();
+    if (ok) setTimeout(() => { if (PR && PR.kind === 'art' && PR.words[PR.i] === w) { PR.i++; PR.picked = null; renderArticle(); } }, 650);
+  });
+  $('#next')?.addEventListener('click', () => { PR.i++; PR.picked = null; renderArticle(); });
+}
+
+// 빈칸 채우기: 예문에서 그 단어(어미 3글자까지)를 찾아 빈칸으로
+function clozeOf(w) {
+  if (!w.ex || w.de.includes(' ')) return null;
+  const stem = w.de.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const m = new RegExp('(?<![\\p{L}])' + stem + '\\p{L}{0,3}(?![\\p{L}])', 'iu').exec(w.ex);
+  return m ? { before: w.ex.slice(0, m.index), word: m[0], after: w.ex.slice(m.index + m[0].length) } : null;
+}
+function distractors(w, n) {
+  const kind = x => (x.art ? 'n' : isVerb(x) ? 'v' : 'a');
+  const pool = allWords().filter(x => x.id !== w.id && x.de.toLowerCase() !== w.de.toLowerCase() && !x.de.includes(' ') && kind(x) === kind(w));
+  return shuffle(pool.filter(x => x.cat === w.cat)).concat(shuffle(pool.filter(x => x.cat !== w.cat))).slice(0, n);
+}
+function startCloze(mode) {
+  const { words, fromLearned } = practicePool(w => !!clozeOf(w), 10, 'clozeMiss');
+  if (!words.length) return toast('연습할 단어가 없어요');
+  PR = { kind: 'cloze', mode, words, i: 0, score: 0, picked: null, wrong: [], fromLearned, hint: false, typed: '' };
+  openOverlay(); renderCloze();
+}
+function renderCloze() {
+  const inner = $('#overlay-inner');
+  if (PR.i >= PR.words.length) return renderPracticeDone();
+  const w = PR.words[PR.i], c = clozeOf(w), ans = PR.picked != null, ok = PR.picked === true;
+  if (!PR.opts || PR.opts.i !== PR.i) PR.opts = { i: PR.i, list: shuffle([w, ...distractors(w, 3)]) };
+  const gapTxt = PR.mode === 'type' && PR.hint ? esc(c.word[0]) + '…' : '&nbsp;';
+  const sent = ans ? `${esc(c.before)}<mark class="${ok ? 'ok' : 'no'}">${esc(c.word)}</mark>${esc(c.after)}`
+                   : `${esc(c.before)}<span class="gap">${gapTxt}</span>${esc(c.after)}`;
+  inner.innerHTML = practiceTop() + `
+    <div class="seg" style="justify-content:center;margin-bottom:12px">
+      <button class="chip ${PR.mode === 'choice' ? 'on' : ''}" data-m="choice">보기 고르기</button>
+      <button class="chip ${PR.mode === 'type' ? 'on' : ''}" data-m="type">직접 쓰기</button></div>
+    <div class="card cz">
+      <p class="cz-sent">${sent}</p>
+      <div class="cz-foot">
+        ${ans || PR.hint ? `<p class="cz-ko">💡 ${esc(w.ko)}${ans ? ` · ${wordHtml(w)}` : ''}</p>` : '<button class="chip" id="hint">💡 힌트 (뜻 보기)</button><span style="flex:1"></span>'}
+        ${ans ? `<button class="say sm" data-say="${esc(w.ex)}" aria-label="예문 듣기">${ICON.say}</button>` : ''}
+      </div>
+    </div>
+    ${PR.mode === 'choice'
+      ? `<div class="opts">${PR.opts.list.map(o => { const cls = !ans ? '' : o === w ? 'right' : o.id === PR.pickedId ? 'wrong' : '';
+          return `<button class="opt ${cls}" data-o="${esc(o.id)}" ${ans ? 'disabled' : ''}>${esc(o.de)}</button>`; }).join('')}</div>`
+      : `<form id="tf" class="row" autocomplete="off"><input class="inp" id="ti" placeholder="빈칸에 들어갈 단어" autocapitalize="off" autocorrect="off" spellcheck="false" ${ans ? 'disabled' : ''} value="${esc(PR.typed)}"><button class="btn" style="flex:none" ${ans ? 'disabled' : ''}>확인</button></form>`}
+    ${ans ? `<div class="feedback ${ok ? 'ok' : 'no'}"><b>${ok ? '✓ Richtig!' : '✗ Leider falsch'}</b>정답: ${esc(c.word)}${norm(c.word) !== norm(w.de) ? ` (기본형 ${esc(w.de)})` : ''}</div>
+      <button class="btn wide" id="next" style="margin-top:12px">${PR.i + 1 < PR.words.length ? '다음' : '결과 보기'}</button>` : ''}`;
+  wireCommon(inner);
+  inner.querySelectorAll('[data-m]').forEach(b => b.onclick = () => { PR.mode = b.dataset.m; S.set.cloze = PR.mode; save(); renderCloze(); });
+  $('#hint')?.addEventListener('click', () => { PR.hint = true; renderCloze(); });
+  const answer = good => {
+    PR.picked = good;
+    if (good) { PR.score++; bumpMiss('clozeMiss', w.id, -1); } else { PR.wrong.push(w); bumpMiss('clozeMiss', w.id, 1); }
+    save(); renderCloze();
+  };
+  inner.querySelectorAll('[data-o]').forEach(b => b.onclick = () => { PR.pickedId = b.dataset.o; answer(b.dataset.o === w.id); });
+  $('#tf')?.addEventListener('submit', e => {
+    e.preventDefault();
+    const v = $('#ti').value; if (!v.trim()) return;
+    PR.typed = v; answer(norm(v) === norm(c.word) || norm(v) === norm(w.de));
+  });
+  $('#next')?.addEventListener('click', () => { PR.i++; PR.picked = null; PR.pickedId = null; PR.typed = ''; PR.hint = false; renderCloze(); });
+  if (PR.mode === 'type' && !ans) setTimeout(() => $('#ti')?.focus(), 60);
+}
+function renderPracticeDone() {
+  const n = PR.words.length, perfect = PR.score === n;
+  const wrong = [...new Set(PR.wrong)];
+  $('#overlay-inner').innerHTML = `
+    <div class="topbar"><button class="x-btn" id="close" aria-label="닫기">${ICON.x}</button><div class="bar"><i style="width:100%"></i></div><span class="count num">${n} / ${n}</span></div>
+    <div class="done-screen pd">
+      <div class="emo">${perfect ? '🏆' : PR.score >= n / 2 ? '👏' : '💪'}</div>
+      <h2>${PR.score} / ${n}</h2>
+      <p>${perfect ? 'Perfekt! 다 맞혔어요.' : '틀린 단어는 다음 연습 때 먼저 나와요.'}</p>
+      ${wrong.length ? `<ul class="wl">${wrong.map(w => `<li><div class="wl-row"><span class="w">${wordHtml(w)}</span><span class="k">${esc(w.ko)}</span></div></li>`).join('')}</ul>` : ''}
+      <div class="btns"><button class="btn" id="again">다시 하기</button><button class="btn ghost" id="go-close">닫기</button></div>
+    </div>`;
+  $('#close').onclick = $('#go-close').onclick = closePractice;
+  $('#again').onclick = () => (PR.kind === 'art' ? startArticle() : startCloze(PR.mode));
+}
+
 // ═════════ 단어 목록 ═════════
 let LF = { q: '', cat: '' };
 function openSheet(html) { $('#sheet').innerHTML = html; $('#sheet-bg').hidden = false; document.body.style.overflow = 'hidden'; }
@@ -651,8 +824,34 @@ const LESSON_GROUPS = [
   ['💬 직장 독일어', ['kommunikation']],
 ];
 { const used = LESSON_GROUPS.flatMap(g => g[1]); const rest = LESSONS.filter(l => !used.includes(l.id)).map(l => l.id); if (rest.length) LESSON_GROUPS.push(['그 밖의 장', rest]); }
-function md(text) {
-  const inline = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+// 사전: 단어장 + 각 장의 핵심 용어. 어미를 조금 떼어 보며 찾음 (Proben → Probe)
+let DICT = null;
+function dict() {
+  if (DICT && DICT.n === S.mine.length) return DICT.m;
+  const m = new Map();
+  const add = (de, e) => { const k = de.toLowerCase(); if (k.length >= 2 && !m.has(k)) m.set(k, e); };
+  for (const w of allWords()) if (!w.de.includes(' ')) add(w.de, { w });
+  // 불규칙 복수형도 (Bronchien → Bronchus, Schwämme → Schwamm)
+  for (const w of allWords()) if (w.art && w.pl && !w.pl.startsWith('-') && !w.pl.includes(' ')) add(w.pl, { w });
+  for (const l of LESSONS) for (const [t, ko] of l.terms) for (const part of t.split(' / ')) {
+    const sp = splitTerm(part.trim()); if (!sp.de.includes(' ')) add(sp.de, { term: { art: sp.art, de: sp.de, ko } });
+  }
+  DICT = { n: S.mine.length, m };
+  return m;
+}
+const SUFFIX = ['', 'n', 'en', 'e', 's', 'es', 'er', 'ern', 'em', 'nen', 'ien'];
+function lookupWord(tok) {
+  const m = dict(), t = tok.toLowerCase().replace(/-$/, '');
+  for (const s of SUFFIX) {
+    if (s && !t.endsWith(s)) continue;
+    const base = s ? t.slice(0, -s.length) : t;
+    if (base.length >= 3 && m.has(base)) return m.get(base);
+  }
+  return null;
+}
+const tapWrap = s => s.split(/([\p{L}][\p{L}\p{N}-]*)/u).map((p, i) => (i % 2 ? `<span class="tw${lookupWord(p) ? ' k' : ''}">${esc(p)}</span>` : esc(p))).join('');
+function md(text, tap = false) {
+  const inline = s => (tap ? tapWrap(s) : esc(s)).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
   return text.trim().split(/\n\s*\n/).map(block => {
     const lines = block.split('\n').map(l => l.trim()).filter(Boolean);
     let html = '', list = [];
@@ -674,6 +873,7 @@ function lessonBadge(l) {
 }
 function renderLearn() {
   const box = $('#tab-learn');
+  box.onclick = null;
   if (LV.type === 'lesson') return renderLesson(box);
   if (LV.type === 'quiz') return renderQuiz(box);
   const doneN = LESSONS.filter(l => S.lessons[l.id]?.score != null).length;
@@ -693,9 +893,10 @@ function renderLesson(box) {
   box.innerHTML = `
     <button class="back-link" id="lb">${ICON.back} 목록</button>
     <div class="lesson-head"><span class="ic">${l.icon}</span><div><h2>${esc(l.de)}</h2><p>${esc(l.ko)}</p></div></div>
+    <p class="tap-tip">👆 모르는 단어를 탭하면 뜻이 나와요 · 점선 = 단어장에 있는 단어</p>
     ${l.sections.map((s, i) => `<div class="card sec">
       <h3>${esc(s.h)}</h3>
-      <div class="txt">${md(s.de)}</div>
+      <div class="txt">${md(s.de, true)}</div>
       <div class="ko-box txt" id="ko${i}" hidden>${md(s.ko)}</div>
       <div class="sec-tools">
         <button class="chip" data-ko="${i}">🇰🇷 번역 보기</button>
@@ -714,11 +915,59 @@ function renderLesson(box) {
     b.textContent = k.hidden ? '🇰🇷 번역 보기' : '🇰🇷 번역 숨기기';
   });
   box.querySelectorAll('[data-read]').forEach(b => b.onclick = () => speak(plain(l.sections[+b.dataset.read].de)));
+  box.onclick = e => {
+    const t = e.target.closest('.tw'); if (!t) return;
+    box.querySelectorAll('.tw.on').forEach(x => x.classList.remove('on'));
+    t.classList.add('on');
+    showWordPop(t.textContent);
+  };
   box.querySelectorAll('[data-t]').forEach(b => b.onclick = () => {
     if (b.classList.contains('done')) return toast('이미 단어장에 있어요');
     const [de, ko] = l.terms[+b.dataset.t], sp = splitTerm(de);
     if (addMine({ art: sp.art, de: sp.de, ko, def: '', ex: '' })) { b.classList.add('done'); b.textContent = '✓'; toast('단어장에 넣었어요'); }
   });
+}
+function showWordPop(tok) {
+  const e = lookupWord(tok), clean = tok.replace(/-$/, '');
+  const head = title => `<div class="sheet-head"><h2>${title}</h2><button class="x-btn" id="sh-close" aria-label="닫기">${ICON.x}</button></div>`;
+  const naver = q => `<a class="btn ghost wide" style="margin-top:12px;text-decoration:none" href="https://dict.naver.com/dekodict/#/search?query=${encodeURIComponent(q)}" target="_blank" rel="noopener">네이버 독일어사전에서 찾기</a>`;
+  if (e?.w) {
+    const w = e.w, pl = plural(w);
+    openSheet(head(wordHtml(w)) + `<div class="sheet-body">
+      ${pl ? `<p class="sub" style="margin:0">${isVerb(w) ? '' : 'Pl. '}${esc(pl)}</p>` : ''}
+      <p class="pop-ko">${esc(w.ko)}</p>
+      ${w.def ? `<div class="info"><h4>ERKLÄRUNG</h4><p>${esc(w.def)}</p></div>` : ''}
+      ${w.ex ? `<div class="info ex"><p>${markEx(w)}</p><button class="say sm" data-say="${esc(w.ex)}" aria-label="예문 듣기">${ICON.say}</button></div>` : ''}
+      <div class="row" style="margin-top:14px"><button class="btn ghost" data-say="${esc(sayText(w))}">${ICON.say} 듣기</button><span class="btn ghost" style="opacity:.7">✓ 단어장에 있어요</span></div>
+    </div>`);
+  } else if (e?.term) {
+    const t = e.term;
+    openSheet(head((t.art ? `<span class="art ${t.art}">${t.art}</span> ` : '') + esc(t.de)) + `<div class="sheet-body">
+      <p class="pop-ko">${esc(t.ko)}</p>
+      <div class="row" style="margin-top:10px"><button class="btn ghost" data-say="${esc((t.art ? t.art + ' ' : '') + t.de)}">${ICON.say} 듣기</button><button class="btn" id="pop-add">단어장에 넣기</button></div>
+      ${naver(t.de)}
+    </div>`);
+    $('#pop-add').onclick = () => { if (addMine({ art: t.art, de: t.de, ko: t.ko })) { toast('단어장에 넣었어요'); closeSheet(); } };
+  } else {
+    openSheet(head(esc(clean)) + `<div class="sheet-body">
+      <p class="sub" style="margin:0">단어장에 없는 단어예요.</p>
+      ${naver(clean)}
+      <label class="f">뜻을 적어서 단어장에 넣기</label>
+      <div class="seg" id="a-art">${['', 'der', 'die', 'das'].map(a => `<button class="chip ${a ? '' : 'on'}" data-a="${a}">${a || '관사 없음'}</button>`).join('')}</div>
+      <label class="f" for="pop-de">독일어 (기본형으로 고쳐도 돼요)</label><input class="inp" id="pop-de" value="${esc(clean)}" autocapitalize="off" autocomplete="off">
+      <label class="f" for="pop-ko">한국어 뜻</label><input class="inp" id="pop-ko" autocomplete="off">
+      <button class="btn wide" id="pop-add" style="margin-top:14px">단어장에 넣기</button>
+    </div>`);
+    let art = '';
+    $('#a-art').onclick = ev => { const b = ev.target.closest('[data-a]'); if (!b) return; art = b.dataset.a; document.querySelectorAll('#a-art .chip').forEach(c => c.classList.toggle('on', c === b)); };
+    $('#pop-add').onclick = () => {
+      const de = $('#pop-de').value, ko = $('#pop-ko').value;
+      if (!de.trim() || !ko.trim()) return toast('독일어와 한국어 뜻을 적어 주세요');
+      if (addMine({ art, de, ko })) { toast('단어장에 넣었어요'); closeSheet(); }
+    };
+  }
+  $('#sh-close').onclick = closeSheet;
+  $('#sheet').querySelectorAll('[data-say]').forEach(b => b.onclick = () => speak(b.dataset.say));
 }
 function splitTerm(t) {
   const m = t.match(/^(der|die|das)\s+(.+)$/);
