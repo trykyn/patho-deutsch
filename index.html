@@ -150,8 +150,13 @@ nav.tabbar button.on { color: var(--accent); font-weight: 600; }
 .sheet-head h2 { margin: 0; font-size: 20px; font-weight: 800; }
 .sheet-body { overflow: auto; flex: 1; min-height: 0; margin: 0 -16px; padding: 0 16px; }
 .search { width: 100%; min-height: 46px; border-radius: 14px; border: 0; background: var(--card); box-shadow: var(--shadow); padding: 0 14px; margin-bottom: 10px; }
-.scroll-chips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 4px; scrollbar-width: none; }
-.scroll-chips::-webkit-scrollbar { display: none; }
+/* 분야 탭: 한눈에 다 보이게 여러 줄로, 흰 바탕 + 테두리로 또렷하게 */
+.cat-tabs { display: flex; flex-wrap: wrap; gap: 7px; margin: 2px 0 14px; }
+.cat-tabs button { min-height: 38px; padding: 0 13px; border-radius: 12px; background: var(--card); border: 1.5px solid var(--line); box-shadow: var(--shadow);
+  font-size: 15px; font-weight: 600; color: var(--ink); white-space: nowrap; }
+.cat-tabs button small { font-size: 12px; font-weight: 600; color: var(--muted); margin-left: 2px; }
+.cat-tabs button.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.cat-tabs button.on small { color: var(--accent-ink); opacity: .8; }
 .wl { list-style: none; margin: 0; padding: 0; background: var(--card); border-radius: var(--r); box-shadow: var(--shadow); }
 .wl li { border-top: 1px solid var(--line); }
 .wl li:first-child { border-top: 0; }
@@ -545,16 +550,17 @@ function openSheet(html) { $('#sheet').innerHTML = html; $('#sheet-bg').hidden =
 function closeSheet() { $('#sheet-bg').hidden = true; document.body.style.overflow = ''; if (S.tab === 'words') renderWords(); }
 $('#sheet-bg').addEventListener('click', e => { if (e.target.id === 'sheet-bg') closeSheet(); });
 function openList() {
-  const cats = [];
-  for (const w of allWords()) if (!cats.some(c => c[0] === w.cat)) cats.push([w.cat, w.catKo]);
+  const cats = [], words = allWords();
+  for (const w of words) { const c = cats.find(c => c[0] === w.cat); c ? c[2]++ : cats.push([w.cat, w.catKo, 1]); }
   openSheet(`
     <div class="sheet-head"><h2>단어 목록</h2><button class="x-btn" id="sh-close" aria-label="닫기">${ICON.x}</button></div>
     <input class="search" id="wl-q" type="search" placeholder="독일어나 한국어로 찾기" value="${esc(LF.q)}" autocomplete="off">
-    <div class="scroll-chips" id="wl-cats">
-      <button class="chip ${LF.cat ? '' : 'on'}" data-cat="">전체</button>
-      ${cats.map(([c, k]) => `<button class="chip ${LF.cat === c ? 'on' : ''}" data-cat="${esc(c)}">${esc(k || c)}</button>`).join('')}
+    <div class="sheet-body">
+    <div class="cat-tabs" id="wl-cats">
+      <button class="${LF.cat ? '' : 'on'}" data-cat="">전체 <small>${words.length}</small></button>
+      ${cats.map(([c, k, n]) => `<button class="${LF.cat === c ? 'on' : ''}" data-cat="${esc(c)}">${esc(k || c)} <small>${n}</small></button>`).join('')}
     </div>
-    <div class="sheet-body"><ul class="wl" id="wl"></ul>
+    <ul class="wl" id="wl"></ul>
       <div class="legend"><span><i style="background:var(--line)"></i>새 단어</span><span><i style="background:var(--eosin)"></i>외우는 중</span><span><i style="background:var(--good)"></i>잘 앎</span></div>
     </div>`);
   $('#sh-close').onclick = closeSheet;
@@ -562,7 +568,7 @@ function openList() {
   $('#wl-cats').onclick = e => {
     const b = e.target.closest('[data-cat]'); if (!b) return;
     LF.cat = b.dataset.cat;
-    document.querySelectorAll('#wl-cats .chip').forEach(c => c.classList.toggle('on', c === b));
+    document.querySelectorAll('#wl-cats button').forEach(c => c.classList.toggle('on', c === b));
     drawList();
   };
   drawList();
