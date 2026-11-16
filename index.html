@@ -217,6 +217,10 @@ textarea.inp { min-height: 70px; resize: vertical; }
 .group-h:first-of-type { margin-top: 4px; }
 .badge { flex: none; font-size: 12px; font-weight: 700; border-radius: 99px; padding: 3px 9px; background: var(--field); color: var(--muted); }
 .badge.full { background: var(--good-soft); color: var(--good); }
+.badge.new { background: var(--eosin); color: #fff; letter-spacing: .03em; }
+.new-banner { background: var(--eosin-soft); border-radius: var(--r-sm); padding: 12px 14px; margin-bottom: 14px; font-size: 15px; }
+.new-banner .badge { vertical-align: 1px; }
+.report-link { display: block; margin: 14px auto 0; padding: 8px 12px; font-size: 14px; color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
 .badge.part { background: var(--eosin-soft); color: var(--eosin); }
 .back-link { display: inline-flex; align-items: center; gap: 4px; color: var(--accent); font-weight: 700; font-size: 15px; margin-bottom: 10px; min-height: 36px; }
 .back-link svg { width: 18px; height: 18px; }
@@ -286,6 +290,7 @@ textarea.inp { min-height: 70px; resize: vertical; }
 <script src="words.js"></script>
 <script src="lessons.js"></script>
 <script src="lessons2.js"></script>
+<script src="lessons-auto.js"></script>
 <script>
 'use strict';
 const $ = s => document.querySelector(s);
@@ -817,13 +822,24 @@ function openAdd() {
 
 // ═════════ 병리 공부 ═════════
 let LV = { type: 'list' };
-// 목록 묶음 (새 장을 넣으면 여기에도 id를 추가. 빠진 장은 '그 밖의 장'에 나옴)
+// 목록 묶음. 처음 22개 장은 여기 목록대로, 나중에 추가된 장은 장의 g 값(lab/path/de)으로 들어감
 const LESSON_GROUPS = [
-  ['🧪 검사실 기초', ['probenweg', 'fixierung', 'schneiden', 'he', 'spezial', 'ihc', 'schnellschnitt', 'zytologie', 'molekular', 'digital', 'sicherheit']],
-  ['🩺 병리 지식', ['tumor', 'lymphom', 'lunge', 'abstossung', 'gi', 'mamma', 'niere', 'gyn', 'haut', 'knochenmark']],
-  ['💬 직장 독일어', ['kommunikation']],
+  ['🧪 검사실 기초', ['probenweg', 'fixierung', 'schneiden', 'he', 'spezial', 'ihc', 'schnellschnitt', 'zytologie', 'molekular', 'digital', 'sicherheit'], 'lab'],
+  ['🩺 병리 지식', ['tumor', 'lymphom', 'lunge', 'abstossung', 'gi', 'mamma', 'niere', 'gyn', 'haut', 'knochenmark'], 'path'],
+  ['💬 직장 독일어', ['kommunikation'], 'de'],
 ];
-{ const used = LESSON_GROUPS.flatMap(g => g[1]); const rest = LESSONS.filter(l => !used.includes(l.id)).map(l => l.id); if (rest.length) LESSON_GROUPS.push(['그 밖의 장', rest]); }
+{
+  const used = LESSON_GROUPS.flatMap(g => g[1]), rest = [];
+  for (const l of LESSONS) {
+    if (used.includes(l.id)) continue;
+    const g = LESSON_GROUPS.find(g => g[2] === l.g);
+    g ? g[1].push(l.id) : rest.push(l.id);
+  }
+  if (rest.length) LESSON_GROUPS.push(['그 밖의 장', rest, '']);
+}
+// 새로 추가된 장: added 날짜가 14일 안이고 아직 안 읽은 장
+const isNewLesson = l => !!l.added && !S.lessons[l.id]?.read && (Date.now() - new Date(l.added + 'T00:00:00').getTime()) < 14 * 864e5;
+const REPO = 'https://github.com/trykyn/patho-deutsch';
 // 사전: 단어장 + 각 장의 핵심 용어. 어미를 조금 떼어 보며 찾음 (Proben → Probe)
 let DICT = null;
 function dict() {
@@ -867,6 +883,7 @@ function md(text, tap = false) {
 const plain = text => text.replace(/\*\*/g, '').replace(/^• /gm, '').replace(/→/g, ', ');
 function lessonBadge(l) {
   const r = S.lessons[l.id];
+  if (isNewLesson(l)) return '<span class="badge new">NEW</span>';
   if (r?.score != null) return `<span class="badge ${r.score === r.total ? 'full' : 'part'}">퀴즈 ${r.score}/${r.total}</span>`;
   if (r?.read) return '<span class="badge">읽음</span>';
   return '';
@@ -877,7 +894,9 @@ function renderLearn() {
   if (LV.type === 'lesson') return renderLesson(box);
   if (LV.type === 'quiz') return renderQuiz(box);
   const doneN = LESSONS.filter(l => S.lessons[l.id]?.score != null).length;
+  const newN = LESSONS.filter(isNewLesson).length;
   box.innerHTML = `
+    ${newN ? `<div class="new-banner">✨ 새 장 <b>${newN}개</b>가 추가됐어요. 아래에서 <span class="badge new">NEW</span>를 찾아보세요.</div>` : ''}
     <div class="progress-line"><span>퀴즈 끝낸 장 <b class="num">${doneN}</b> / ${LESSONS.length}</span><div class="bar"><i style="width:${(doneN / LESSONS.length) * 100}%"></i></div></div>
     ${LESSON_GROUPS.map(([title, ids]) => {
       const ls = ids.map(id => LESSONS.find(l => l.id === id)).filter(Boolean);
@@ -907,7 +926,9 @@ function renderLesson(box) {
         return `<li><span class="tde">${sp.art ? `<span class="art ${sp.art}">${sp.art}</span> ` : ''}${esc(sp.de)}</span><span class="tko">${esc(ko)}</span>
         <button class="add-mini ${has ? 'done' : ''}" data-t="${i}" aria-label="단어장에 넣기">${has ? '✓' : '+'}</button></li>`; }).join('')}
     </ul><p class="sub" style="margin:8px 0 0">+ 를 누르면 단어장에 넣어요.</p></div>
-    <button class="btn wide" id="lq">퀴즈 풀기 (${l.quiz.length}문제)</button>`;
+    <button class="btn wide" id="lq">퀴즈 풀기 (${l.quiz.length}문제)</button>
+    <button class="report-link" id="lr">⚠️ 내용이 이상해요</button>`;
+  $('#lr').onclick = () => openReport(l);
   $('#lb').onclick = () => { LV = { type: 'list' }; renderLearn(); window.scrollTo(0, 0); };
   $('#lq').onclick = () => { LV = { type: 'quiz', id: l.id, i: 0, score: 0, picked: null }; renderLearn(); window.scrollTo(0, 0); };
   box.querySelectorAll('[data-ko]').forEach(b => b.onclick = () => {
@@ -968,6 +989,30 @@ function showWordPop(tok) {
   }
   $('#sh-close').onclick = closeSheet;
   $('#sheet').querySelectorAll('[data-say]').forEach(b => b.onclick = () => speak(b.dataset.say));
+}
+// "내용이 이상해요": GitHub 이슈(라벨 content)로 보냄 → 매주 자동 작업이 읽고 고침
+function openReport(l) {
+  openSheet(`<div class="sheet-head"><h2>내용이 이상해요</h2><button class="x-btn" id="sh-close" aria-label="닫기">${ICON.x}</button></div>
+    <div class="sheet-body">
+      <p class="sub" style="margin:0">${l.icon} ${esc(l.de)}</p>
+      <label class="f">어디가 이상한가요?</label>
+      <div class="seg" id="r-where">${['본문', '번역', '용어', '퀴즈', '기타'].map((x, i) => `<button class="chip ${i ? '' : 'on'}" data-w="${x}">${x}</button>`).join('')}</div>
+      <label class="f" for="r-text">무엇이 틀렸는지 적어 주세요 (우리 병원에서는 이렇게 해요 등)</label>
+      <textarea class="inp" id="r-text" style="min-height:110px"></textarea>
+      <button class="btn wide" id="r-send" style="margin-top:14px">GitHub로 보내기</button>
+      <p class="sub" style="margin:10px 0 0">GitHub 페이지가 열리면 로그인된 상태에서 <b>Create</b>(또는 Submit)를 누르면 끝이에요. 매주 월요일 자동 작업이 읽고 고쳐요.</p>
+    </div>`);
+  let where = '본문';
+  $('#sh-close').onclick = closeSheet;
+  $('#r-where').onclick = e => { const b = e.target.closest('[data-w]'); if (!b) return; where = b.dataset.w; document.querySelectorAll('#r-where .chip').forEach(c => c.classList.toggle('on', c === b)); };
+  $('#r-send').onclick = () => {
+    const text = $('#r-text').value.trim();
+    if (!text) return toast('무엇이 이상한지 적어 주세요');
+    const title = `[내용] ${l.de} (${l.id}) – ${where}`;
+    const body = `장: ${l.de} / ${l.ko}\nid: ${l.id}\n부분: ${where}\n\n${text}`;
+    window.open(`${REPO}/issues/new?labels=content&title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`, '_blank', 'noopener');
+    closeSheet();
+  };
 }
 function splitTerm(t) {
   const m = t.match(/^(der|die|das)\s+(.+)$/);
