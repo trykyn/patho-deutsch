@@ -245,6 +245,8 @@ textarea.inp { min-height: 70px; resize: vertical; }
 .terms li:first-child { border-top: 0; }
 .terms .tde { flex: 1; font-weight: 700; }
 .terms .tko { color: var(--muted); font-size: 14px; text-align: right; }
+.v-pick { flex: none; width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--line); background: var(--card); }
+.v-pick.on { border: 7px solid var(--accent); }
 .add-mini { flex: none; width: 32px; height: 32px; border-radius: 50%; background: var(--soft); color: var(--accent); font-size: 20px; font-weight: 700; line-height: 1; }
 .add-mini.done { background: var(--good-soft); color: var(--good); font-size: 15px; }
 /* 퀴즈 */
@@ -332,18 +334,51 @@ const learnedCount = () => Object.keys(S.prog).filter(byId).length;
 const streakNow = () => (S.streak.last >= today() - 1 ? S.streak.n : 0);
 
 // ── 독일어 읽어 주기 ──
-let deVoice = null;
-function pickVoice() {
-  const vs = speechSynthesis.getVoices().filter(v => /^de(-|_|$)/i.test(v.lang));
-  deVoice = vs.find(v => /de-DE/i.test(v.lang) && /premium|enhanced|anna|helena|petra|google/i.test(v.name)) || vs.find(v => /de-DE/i.test(v.lang)) || vs[0] || null;
-}
-if ('speechSynthesis' in window) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
-function speak(text) {
+// 목소리: 고르지 않으면 휴대폰 기본 독일어 목소리(아이폰 설정 → 손쉬운 사용 → 읽기 및 말하기 → 음성 → 독일어).
+// 앱에서 고르면 그 목소리(voiceURI)를 저장해서 씀.
+const FUN_VOICES = /^(eddy|flo|grandma|grandpa|oma|opa|reed|rocko|sandy|shelley|bad news|bells|boing|bubbles|cellos|good news|jester|organ|superstar|trinoids|whisper|wobble|zarvox|albert|fred|junior|kathy|ralph)/i;
+const germanVoices = () => ('speechSynthesis' in window ? speechSynthesis.getVoices() : []).filter(v => /^de(-|_|$)/i.test(v.lang));
+function chosenVoice() { return S.set.voice ? germanVoices().find(v => v.voiceURI === S.set.voice) || null : null; }
+if ('speechSynthesis' in window) speechSynthesis.getVoices();
+function speak(text, voice) {
   if (!('speechSynthesis' in window)) return toast('이 기기에서는 읽어 주기가 안 돼요');
   speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'de-DE'; if (deVoice) u.voice = deVoice; u.rate = .92;
+  u.lang = 'de-DE';
+  const v = voice || chosenVoice(); if (v) u.voice = v;
+  u.rate = S.set.rate || .92;
   speechSynthesis.speak(u);
+}
+const SAMPLE = 'Die Probe ist ohne Beschriftung angekommen. Bitte drei Stufen schneiden.';
+function openVoice() {
+  const draw = () => {
+    const vs = germanVoices().sort((a, b) => (FUN_VOICES.test(a.name) - FUN_VOICES.test(b.name)) || (/de-DE/i.test(b.lang) - /de-DE/i.test(a.lang)) || a.name.localeCompare(b.name));
+    const row = (uri, name, sub) => `<li><div class="wl-row" style="gap:12px">
+        <button class="v-pick ${(S.set.voice || '') === uri ? 'on' : ''}" data-v="${esc(uri)}" aria-label="고르기"></button>
+        <span class="w">${esc(name)}${sub ? `<small class="sub" style="display:block;font-weight:500">${esc(sub)}</small>` : ''}</span>
+        <button class="say sm" data-try="${esc(uri)}" aria-label="들어보기">${ICON.say}</button></div></li>`;
+    openSheet(`<div class="sheet-head"><h2>발음 목소리</h2><button class="x-btn" id="sh-close" aria-label="닫기">${ICON.x}</button></div>
+      <div class="sheet-body">
+        <label class="f" style="margin-top:0">속도</label>
+        <div class="seg" id="v-rate">${[[.75, '느리게'], [.92, '보통'], [1.05, '빠르게']].map(([r, t]) => `<button class="chip ${(S.set.rate || .92) === r ? 'on' : ''}" data-r="${r}">${t}</button>`).join('')}</div>
+        <label class="f">목소리 (🔊로 들어보고 고르세요)</label>
+        <ul class="wl" id="v-list">
+          ${row('', '휴대폰 기본 목소리', '아이폰 설정에서 고른 독일어 목소리')}
+          ${vs.map(v => row(v.voiceURI, v.name, (FUN_VOICES.test(v.name) ? '재미용 목소리 · ' : '') + v.lang)).join('')}
+        </ul>
+        ${vs.length ? '' : '<p class="sub">독일어 목소리 목록을 아직 못 불러왔어요. 창을 닫고 다시 열어 보세요.</p>'}
+        <p class="sub" style="margin-top:12px">더 자연스러운 목소리는 아이폰 <b>설정 → 손쉬운 사용 → 읽기 및 말하기 → 음성 → 독일어</b>에서 '고품질'(또는 Premium) 목소리를 내려받은 뒤, 앱을 껐다 켜면 이 목록에 나와요.</p>
+      </div>`);
+    $('#sh-close').onclick = closeSheet;
+    $('#v-rate').onclick = e => { const b = e.target.closest('[data-r]'); if (!b) return; S.set.rate = +b.dataset.r; save(); draw(); speak(SAMPLE); };
+    $('#v-list').onclick = e => {
+      const t = e.target.closest('[data-try]');
+      if (t) return speak(SAMPLE, t.dataset.try ? germanVoices().find(v => v.voiceURI === t.dataset.try) : null);
+      const p = e.target.closest('[data-v]');
+      if (p) { S.set.voice = p.dataset.v || ''; save(); draw(); speak(SAMPLE); }
+    };
+  };
+  draw();
 }
 
 // ── 단어 표시 도우미 ──
@@ -419,6 +454,7 @@ function renderWords() {
         <button class="chip ${S.set.front === 'ko' ? 'on' : ''}" data-front="ko">한국어</button></div></div>
       <div class="set-line"><span>하루 새 단어</span><div class="seg">
         ${[5, 10, 15, 20].map(n => `<button class="chip ${S.set.per === n ? 'on' : ''}" data-per="${n}">${n}</button>`).join('')}</div></div>
+      <div class="set-line"><span>발음 목소리</span><button class="chip" id="voice-btn">${esc(chosenVoice()?.name || '휴대폰 기본')} ›</button></div>
     </div>`;
   $('#start')?.addEventListener('click', () => startStudy('today'));
   $('#more10')?.addEventListener('click', () => {
@@ -431,6 +467,7 @@ function renderWords() {
   $('#p-art').onclick = startArticle;
   $('#p-cloze').onclick = () => startCloze(S.set.cloze || 'choice');
   $('#add').onclick = () => openAdd();
+  $('#voice-btn').onclick = openVoice;
   document.querySelectorAll('[data-front]').forEach(b => b.onclick = () => { S.set.front = b.dataset.front; save(); renderWords(); });
   document.querySelectorAll('[data-per]').forEach(b => b.onclick = () => {
     const n = +b.dataset.per; S.set.per = n;
