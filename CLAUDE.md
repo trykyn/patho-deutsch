@@ -14,7 +14,7 @@ Keine Build-Schritte: `index.html` lädt `words.js`, `lessons.js`, `lessons2.js`
   - Kein `|` und kein Backtick im Text. Wort-IDs (= das Wort) müssen eindeutig sein.
 - `lessons.js`, `lessons2.js` – die ersten 22 Kapitel. **Nicht ändern**, außer um gemeldete Fehler zu korrigieren.
 - `lessons-auto.js` – hier werden neue Kapitel angehängt (innerhalb von `LESSONS.push( ... );`).
-- `fachsprache.js` – Nachschlage-Liste Alltagswort ↔ Fachsprache (Organe, Wortbausteine). Zeile: `[Alltag mit Artikel, Fachsprache, Adjektiv, Wortteil, Koreanisch, Beispiele]`. Darf bei Bedarf um passende Organe ergänzt werden.
+- `fachsprache.js` – Nachschlage-Liste Alltagswort ↔ Fachsprache (Organe, Wortbausteine). Zeile: `[Alltag mit Artikel, Fachsprache, Adjektiv, Wortteil, Koreanisch, Beispiele, Bild-Key]` (Bild-Key = Organ-Key aus `bodymap.js`, mehrere mit Leerzeichen, leer lassen wenn kein Organ). Darf bei Bedarf um passende Organe ergänzt werden.
 - `TOPICS.md` – Themenliste für neue Kapitel, mit Häkchen.
 - `tests/check.mjs` – Datenprüfung: `node tests/check.mjs` muss ✅ zeigen.
 - `sw.js` – Service Worker; bei jeder Änderung `CACHE = 'patho-deutsch-vN'` um 1 erhöhen.
