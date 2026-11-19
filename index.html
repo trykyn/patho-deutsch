@@ -19,6 +19,7 @@
   --accent: #6a4fbb; --accent-ink: #ffffff; --soft: #ece4f9; --eosin: #e2669a; --eosin-soft: #fde7f0;
   --good: #2f9e6a; --good-soft: #e3f5ec; --bad: #d4506e; --bad-soft: #fde8ec;
   --der: #2f6fd0; --die: #d43f6c; --das: #23905d;
+  --bm-body: #fbf8fe; --bm-line: #cbbfdb; --o: #e3d9f0; --o2: #c4b5da; --hl: #e2669a;
   --r: 22px; --r-sm: 16px;
   --shadow: 0 1px 2px rgba(43, 34, 56, .05), 0 6px 18px rgba(106, 79, 187, .07);
   --sans: system-ui, -apple-system, "Apple SD Gothic Neo", "Segoe UI", "Malgun Gothic", sans-serif;
@@ -29,6 +30,7 @@
     --accent: #a98ef0; --accent-ink: #1c1030; --soft: #33284a; --eosin: #ff8db8; --eosin-soft: #45233a;
     --good: #5fd39b; --good-soft: #1e3a2e; --bad: #ff8aa2; --bad-soft: #452630;
     --der: #7fb0ff; --die: #ff86a8; --das: #6fd6a3;
+    --bm-body: #2b2336; --bm-line: #4a3f5a; --o: #3d3350; --o2: #5a4d70; --hl: #ff8db8;
     --shadow: 0 1px 2px rgba(0, 0, 0, .3);
   }
 }
@@ -247,12 +249,20 @@ textarea.inp { min-height: 70px; resize: vertical; }
 .terms .tko { color: var(--muted); font-size: 14px; text-align: right; }
 .v-pick { flex: none; width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--line); background: var(--card); }
 .v-pick.on { border: 7px solid var(--accent); }
+.fx.has-bm { display: flex; gap: 12px; align-items: flex-start; }
+.fx-body { flex: 1; min-width: 0; }
+.fx-pic { flex: none; width: 64px; height: 64px; border-radius: 14px; background: var(--field); padding: 3px; }
+.bm { width: 100%; height: 100%; display: block; }
+.bm-big { height: min(52vh, 380px); background: var(--field); border-radius: var(--r); padding: 10px; }
 .fx { background: var(--card); border-radius: var(--r-sm); box-shadow: var(--shadow); padding: 12px 14px; margin-bottom: 8px; }
-.fx-main { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 17px; }
+.fx { position: relative; }
+.fx-body { padding-right: 38px; }
+.fx-main { font-size: 17px; line-height: 1.35; }
+.fx-main .fx-al { display: block; }
 .fx-al { font-weight: 700; }
 .fx-eq { color: var(--muted); }
-.fx-fa { flex: 1; min-width: 0; font-weight: 800; color: var(--accent); }
-.fx-main .say { margin-left: auto; }
+.fx-fa { font-weight: 800; color: var(--accent); overflow-wrap: anywhere; }
+.fx-main .say { position: absolute; top: 10px; right: 10px; }
 .fx-sub { font-size: 14px; color: var(--muted); margin-top: 4px; }
 .fx-sub b { color: var(--ink); font-weight: 650; }
 .fx-ex { font-size: 13.5px; color: var(--muted); font-style: italic; margin-top: 2px; }
@@ -307,6 +317,7 @@ textarea.inp { min-height: 70px; resize: vertical; }
 <script src="lessons.js"></script>
 <script src="lessons2.js"></script>
 <script src="lessons-auto.js"></script>
+<script src="bodymap.js"></script>
 <script src="fachsprache.js"></script>
 <script>
 'use strict';
@@ -804,9 +815,27 @@ function renderFach() {
   $('#fx-g').onclick = e => { const b = e.target.closest('[data-g]'); if (!b) return; FX.g = b.dataset.g; document.querySelectorAll('#fx-g button').forEach(c => c.classList.toggle('on', c === b)); drawFach(); };
   $('#fx-list').onclick = e => {
     const sb = e.target.closest('[data-say]'); if (sb) return speak(sb.dataset.say);
+    const pic = e.target.closest('[data-bm]'); if (pic) return openBodyMap(pic.dataset.bm, pic.dataset.t.split('|'));
     const c = e.target.closest('.fx'); if (c && FX.hide) c.classList.toggle('show');
   };
   drawFach();
+}
+function openBodyMap(keys, [al, fa, ko]) {
+  let whole = false;
+  const draw = () => {
+    openSheet(`<div class="sheet-head"><h2>${esc(splitTerm(al).de)} = <span style="color:var(--accent)">${esc(fa)}</span></h2><button class="x-btn" id="sh-close" aria-label="닫기">${ICON.x}</button></div>
+      <div class="sheet-body">
+        <p class="pop-ko" style="margin-top:0">${esc(ko)}</p>
+        <div class="bm-big">${BM.svg(keys, 'bm', whole)}</div>
+        <div class="seg" id="bm-zoom" style="justify-content:center;margin-top:10px">
+          <button class="chip ${whole ? '' : 'on'}" data-z="0">가까이</button><button class="chip ${whole ? 'on' : ''}" data-z="1">몸 전체</button>
+        </div>
+        <p class="sub" style="text-align:center;margin:10px 0 0">정면에서 본 단순한 그림이에요 · 그림의 왼쪽 = 환자의 오른쪽</p>
+      </div>`);
+    $('#sh-close').onclick = closeSheet;
+    $('#bm-zoom').onclick = e => { const b = e.target.closest('[data-z]'); if (!b) return; whole = b.dataset.z === '1'; draw(); };
+  };
+  draw();
 }
 function drawFach() {
   const q = FX.q.trim().toLowerCase();
@@ -818,8 +847,10 @@ function drawFach() {
     const rows = g.rows.filter(r => !q || r.join(' ').toLowerCase().includes(q));
     if (!rows.length) continue;
     n += rows.length;
-    html += `<h2 class="group-h">${g.icon} ${esc(g.de)} <small style="font-weight:600">· ${esc(g.ko)}</small></h2>` + rows.map(([al, fa, adj, teil, ko, ex]) => `
-      <div class="fx${FX.hide ? ' quiz' : ''}">
+    html += `<h2 class="group-h">${g.icon} ${esc(g.de)} <small style="font-weight:600">· ${esc(g.ko)}</small></h2>` + rows.map(([al, fa, adj, teil, ko, ex, mk]) => `
+      <div class="fx${FX.hide ? ' quiz' : ''}${mk ? ' has-bm' : ''}">
+        ${mk ? `<button class="fx-pic" data-bm="${esc(mk)}" data-t="${esc(al)}|${esc(fa)}|${esc(ko)}" aria-label="그림 크게 보기">${BM.svg(mk)}</button>` : ''}
+        <div class="fx-body">
         <div class="fx-main">
           <span class="fx-al">${hid('all', alltag(al))}</span>
           <span class="fx-eq">=</span>
@@ -828,6 +859,7 @@ function drawFach() {
         </div>
         <div class="fx-sub">${esc(ko)}${adj !== '–' ? ` · Adj. <b>${esc(adj)}</b>` : ''} · <b>${esc(teil)}</b></div>
         <div class="fx-ex">z. B. ${esc(ex)}</div>
+        </div>
       </div>`).join('');
   }
   $('#fx-list').innerHTML = html || '<p class="empty">찾는 말이 없어요</p>';
@@ -1185,6 +1217,7 @@ document.addEventListener('visibilitychange', () => {
     if (S.tab === 'words') renderWords();
   }
 });
+document.body.insertAdjacentHTML('beforeend', BM.defs);
 setTab(S.tab === 'learn' ? 'learn' : 'words');
 
 if ('serviceWorker' in navigator && location.protocol === 'https:') {
