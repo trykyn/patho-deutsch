@@ -98,7 +98,7 @@ nav.tabbar button.on { color: var(--accent); font-weight: 600; }
 /* ── 공부 화면 (카드) ── */
 .overlay { position: fixed; inset: 0; z-index: 20; background: var(--bg); display: flex; flex-direction: column;
   padding: calc(10px + env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom)); }
-.overlay-inner { width: 100%; max-width: 540px; margin: 0 auto; flex: 1; display: flex; flex-direction: column; min-height: 0; overflow-y: auto; }
+.overlay-inner { width: 100%; max-width: 540px; margin: 0 auto; flex: 1; display: flex; flex-direction: column; min-height: 0; overflow-y: auto; overflow-x: hidden; }
 .topbar { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
 .x-btn { flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--card); box-shadow: var(--shadow); color: var(--muted); }
 .x-btn svg { width: 20px; height: 20px; }
@@ -247,6 +247,20 @@ textarea.inp { min-height: 70px; resize: vertical; }
 .terms .tko { color: var(--muted); font-size: 14px; text-align: right; }
 .v-pick { flex: none; width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--line); background: var(--card); }
 .v-pick.on { border: 7px solid var(--accent); }
+.fx { background: var(--card); border-radius: var(--r-sm); box-shadow: var(--shadow); padding: 12px 14px; margin-bottom: 8px; }
+.fx-main { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 17px; }
+.fx-al { font-weight: 700; }
+.fx-eq { color: var(--muted); }
+.fx-fa { flex: 1; min-width: 0; font-weight: 800; color: var(--accent); }
+.fx-main .say { margin-left: auto; }
+.fx-sub { font-size: 14px; color: var(--muted); margin-top: 4px; }
+.fx-sub b { color: var(--ink); font-weight: 650; }
+.fx-ex { font-size: 13.5px; color: var(--muted); font-style: italic; margin-top: 2px; }
+.fx-hid { display: inline-block; min-width: 70px; text-align: center; border-radius: 8px; background: var(--soft); color: var(--accent); font-weight: 800; }
+.fx-real { display: none; }
+.fx.show .fx-hid { display: none; } .fx.show .fx-real { display: inline; }
+.fx.quiz { cursor: pointer; }
+.fx.quiz:not(.show) .fx-sub, .fx.quiz:not(.show) .fx-ex { visibility: hidden; height: 0; margin: 0; }
 .add-mini { flex: none; width: 32px; height: 32px; border-radius: 50%; background: var(--soft); color: var(--accent); font-size: 20px; font-weight: 700; line-height: 1; }
 .add-mini.done { background: var(--good-soft); color: var(--good); font-size: 15px; }
 /* 퀴즈 */
@@ -293,6 +307,7 @@ textarea.inp { min-height: 70px; resize: vertical; }
 <script src="lessons.js"></script>
 <script src="lessons2.js"></script>
 <script src="lessons-auto.js"></script>
+<script src="fachsprache.js"></script>
 <script>
 'use strict';
 const $ = s => document.querySelector(s);
@@ -444,6 +459,7 @@ function renderWords() {
     </div>
     <div class="card list-btns">
       <button class="menu-btn" id="review" ${due ? '' : 'disabled style="opacity:.55"'}><span class="ic">🔁</span><span>복습하기<small>${due ? `오늘 다시 볼 단어 ${due}개` : '지금은 복습할 단어가 없어요'}</small></span><span class="go">›</span></button>
+      <button class="menu-btn" id="fach"><span class="ic">📗</span><span>Fachsprache 모음<small>Kolon = Dickdarm · 장기별 ${FACH.reduce((a, g) => a + g.rows.length, 0)}개</small></span><span class="go">›</span></button>
       <button class="menu-btn" id="list"><span class="ic">📖</span><span>단어 목록<small>분야별로 보기 · 검색</small></span><span class="go">›</span></button>
       <button class="menu-btn" id="add"><span class="ic">➕</span><span>내 단어 추가<small>일하다 만난 단어를 넣어요</small></span><span class="go">›</span></button>
     </div>
@@ -464,6 +480,7 @@ function renderWords() {
   });
   $('#review').onclick = () => due && startStudy('review');
   $('#list').onclick = openList;
+  $('#fach').onclick = openFach;
   $('#p-art').onclick = startArticle;
   $('#p-cloze').onclick = () => startCloze(S.set.cloze || 'choice');
   $('#add').onclick = () => openAdd();
@@ -762,6 +779,61 @@ function renderPracticeDone() {
   $('#again').onclick = () => (PR.kind === 'art' ? startArticle() : startCloze(PR.mode));
 }
 
+// ═════════ Fachsprache 모음 ═════════
+let FX = { q: '', g: '', hide: '' };
+function openFach() { openOverlay(); renderFach(); }
+function renderFach() {
+  const inner = $('#overlay-inner');
+  inner.innerHTML = `
+    <div class="topbar"><button class="x-btn" id="close" aria-label="닫기">${ICON.x}</button>
+      <h2 style="flex:1;margin:0;font-size:20px;font-weight:800">Fachsprache 모음</h2></div>
+    <input class="search" id="fx-q" type="search" placeholder="찾기: Kolon, Niere, 간, Hepato-…" value="${esc(FX.q)}" autocomplete="off" autocapitalize="off">
+    <div class="seg" id="fx-hide" style="margin-bottom:10px">
+      <button class="chip ${FX.hide ? '' : 'on'}" data-h="">다 보기</button>
+      <button class="chip ${FX.hide === 'fach' ? 'on' : ''}" data-h="fach">Fachsprache 가리기</button>
+      <button class="chip ${FX.hide === 'all' ? 'on' : ''}" data-h="all">일상어 가리기</button>
+    </div>
+    <div class="cat-tabs" id="fx-g">
+      <button class="${FX.g ? '' : 'on'}" data-g="">전체</button>
+      ${FACH.map(g => `<button class="${FX.g === g.id ? 'on' : ''}" data-g="${g.id}">${g.icon} ${esc(g.ko)}</button>`).join('')}
+    </div>
+    <div id="fx-list"></div>`;
+  $('#close').onclick = () => closeStudy();
+  $('#fx-q').oninput = e => { FX.q = e.target.value; drawFach(); };
+  $('#fx-hide').onclick = e => { const b = e.target.closest('[data-h]'); if (!b) return; FX.hide = b.dataset.h; document.querySelectorAll('#fx-hide .chip').forEach(c => c.classList.toggle('on', c === b)); drawFach(); };
+  $('#fx-g').onclick = e => { const b = e.target.closest('[data-g]'); if (!b) return; FX.g = b.dataset.g; document.querySelectorAll('#fx-g button').forEach(c => c.classList.toggle('on', c === b)); drawFach(); };
+  $('#fx-list').onclick = e => {
+    const sb = e.target.closest('[data-say]'); if (sb) return speak(sb.dataset.say);
+    const c = e.target.closest('.fx'); if (c && FX.hide) c.classList.toggle('show');
+  };
+  drawFach();
+}
+function drawFach() {
+  const q = FX.q.trim().toLowerCase();
+  const alltag = a => { const sp = splitTerm(a); return (sp.art ? `<span class="art ${sp.art}">${sp.art}</span> ` : '') + esc(sp.de); };
+  const hid = (kind, html) => (FX.hide === kind ? `<span class="fx-hid">?</span><span class="fx-real">${html}</span>` : html);
+  let html = '', n = 0;
+  for (const g of FACH) {
+    if (FX.g && FX.g !== g.id) continue;
+    const rows = g.rows.filter(r => !q || r.join(' ').toLowerCase().includes(q));
+    if (!rows.length) continue;
+    n += rows.length;
+    html += `<h2 class="group-h">${g.icon} ${esc(g.de)} <small style="font-weight:600">· ${esc(g.ko)}</small></h2>` + rows.map(([al, fa, adj, teil, ko, ex]) => `
+      <div class="fx${FX.hide ? ' quiz' : ''}">
+        <div class="fx-main">
+          <span class="fx-al">${hid('all', alltag(al))}</span>
+          <span class="fx-eq">=</span>
+          <span class="fx-fa">${hid('fach', esc(fa))}</span>
+          <button class="say sm" data-say="${esc(fa.replace(/\s*\/\s*/g, ', ').replace(/[()]/g, ''))}" aria-label="듣기">${ICON.say}</button>
+        </div>
+        <div class="fx-sub">${esc(ko)}${adj !== '–' ? ` · Adj. <b>${esc(adj)}</b>` : ''} · <b>${esc(teil)}</b></div>
+        <div class="fx-ex">z. B. ${esc(ex)}</div>
+      </div>`).join('');
+  }
+  $('#fx-list').innerHTML = html || '<p class="empty">찾는 말이 없어요</p>';
+  if (FX.hide && n) $('#fx-list').insertAdjacentHTML('afterbegin', '<p class="hint" style="margin:0 0 4px">카드를 탭하면 가린 말이 보여요</p>');
+}
+
 // ═════════ 단어 목록 ═════════
 let LF = { q: '', cat: '' };
 function openSheet(html) { $('#sheet').innerHTML = html; $('#sheet-bg').hidden = false; document.body.style.overflow = 'hidden'; }
@@ -888,6 +960,11 @@ function dict() {
   for (const w of allWords()) if (w.art && w.pl && !w.pl.startsWith('-') && !w.pl.includes(' ')) add(w.pl, { w });
   for (const l of LESSONS) for (const [t, ko] of l.terms) for (const part of t.split(' / ')) {
     const sp = splitTerm(part.trim()); if (!sp.de.includes(' ')) add(sp.de, { term: { art: sp.art, de: sp.de, ko } });
+  }
+  // Fachsprache 모음의 의학 용어도 (Kolon → 대장 = der Dickdarm)
+  for (const g of FACH) for (const [al, fa, , , ko] of g.rows) for (const part of fa.split(' / ')) {
+    const name = part.replace(/\s*\(.*\)/, '').trim();
+    if (/^[\p{L}-]+$/u.test(name) && !name.startsWith('-')) add(name, { term: { art: '', de: name, ko: ko + ' (= ' + al + ')' } });
   }
   DICT = { n: S.mine.length, m };
   return m;
