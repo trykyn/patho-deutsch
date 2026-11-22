@@ -323,15 +323,16 @@ die|Wartung|-en|정비 (유지 보수)|Regelmäßige Pflege und Prüfung eines G
 |auf dem Laufenden halten|hielt, hat gehalten|진행 상황을 계속 알려 주다|Jemanden regelmäßig informieren.|Halt mich bitte auf dem Laufenden.
 `;
 
-// 분석: 한 줄 → 단어 객체
-const WORDS = (() => {
+// 분석: 한 줄 → 단어 객체 (words-auto.js 도 같은 함수를 씀)
+function parseWords(raw, extra = {}) {
   const out = []; let cat = '', catKo = '';
-  for (const line of WORDS_RAW.split('\n')) {
+  for (const line of raw.split('\n')) {
     const t = line.trim();
     if (!t) continue;
     if (t.startsWith('#')) { [cat, catKo] = t.slice(1).split('|').map(s => s.trim()); continue; }
     const [art, de, pl, ko, def, ex] = t.split('|').map(s => s.trim());
-    out.push({ id: de, art, de, pl, ko, def, ex, cat, catKo });
+    out.push({ id: de, art, de, pl, ko, def, ex, cat, catKo, ...extra });
   }
   return out;
-})();
+}
+const WORDS = parseWords(WORDS_RAW);

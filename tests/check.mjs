@@ -30,11 +30,13 @@ for (const w of WORDS) {
   for (const k of ['de', 'ko', 'def', 'ex', 'cat', 'catKo']) if (!w[k]) err(`단어 ${w.de}: ${k} 비어 있음`);
   if (!['', 'der', 'die', 'das'].includes(w.art)) err(`단어 ${w.de}: 관사 이상 "${w.art}"`);
 }
-const raw = read('words.js').split('const WORDS_RAW = `')[1].split('`;')[0];
-raw.split('\n').forEach((line, i) => {
-  const t = line.trim();
-  if (t && !t.startsWith('#') && t.split('|').length !== 6) err(`words.js 단어 줄 ${i + 1}: 칸이 6개가 아님 → ${t.slice(0, 50)}`);
-});
+for (const [file, name] of [['words.js', 'WORDS_RAW'], ['words-auto.js', 'WORDS_AUTO_RAW']]) {
+  const raw = read(file).split(`const ${name} = \``)[1].split('`;')[0];
+  raw.split('\n').forEach((line, i) => {
+    const t = line.trim();
+    if (t && !t.startsWith('#') && t.split('|').length !== 6) err(`${file} 단어 줄 ${i + 1}: 칸이 6개가 아님 → ${t.slice(0, 50)}`);
+  });
+}
 
 // 장
 const ids = new Set();

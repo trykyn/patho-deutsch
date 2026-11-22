@@ -2,11 +2,12 @@
 
 Eine private Lern-Web-App (GitHub Pages: https://trykyn.github.io/patho-deutsch/) für eine **MTLA in der Pathologie** mit Muttersprache Koreanisch und Deutsch auf **B2**-Niveau. Sie lernt Fachwörter und Pathologie/Histologie-Wissen für die Arbeit im Labor. Alles, was sie in der App sieht, ist Koreanisch (UI) + Deutsch (Lerninhalt).
 
-Keine Build-Schritte: `index.html` lädt `words.js`, `lessons.js`, `lessons2.js`, `lessons-auto.js` direkt. Push auf `main` = sofort live.
+Keine Build-Schritte: `index.html` lädt `words.js`, `words-auto.js`, `lessons.js`, `lessons2.js`, `lessons-auto.js` direkt. Push auf `main` = sofort live.
 
 ## Dateien
 
-- `words.js` – Wortliste als Text `WORDS_RAW`, eine Zeile pro Wort: `Artikel|Wort|Plural|Koreanisch|deutsche Erklärung|Beispielsatz`
+- `words-auto.js` – **hier kommen neue Wörter hin** (Text `WORDS_AUTO_RAW`, gleiches Zeilenformat wie `words.js`). Diese Wörter erscheinen in der App zuerst als „Wörter des Tages“, also in der Woche, in der das passende Kapitel neu ist.
+- `words.js` – Grundwortschatz (nicht erweitern) als Text `WORDS_RAW`, eine Zeile pro Wort: `Artikel|Wort|Plural|Koreanisch|deutsche Erklärung|Beispielsatz`
   - Kategorie-Zeile: `# Deutscher Name | 한국어 이름`
   - Plural: `-n`, `-e`, `-en`, `-s` = an das Wort anhängen; `-` = wie Singular; volles Wort bei Umlaut/unregelmäßig (`Schwämme`); leer = kein Plural
   - Verben/Adjektive: Artikel leer; bei Verben im Plural-Feld die Formen `schnitt zu, hat zugeschnitten`
@@ -58,7 +59,12 @@ Keine Build-Schritte: `index.html` lädt `words.js`, `lessons.js`, `lessons2.js`
 
 1. **Gemeldete Fehler zuerst**: `gh issue list --repo trykyn/patho-deutsch --label content --state open`. Jede Meldung lesen; wenn berechtigt, die Stelle (in der passenden Datei) korrigieren und das Issue mit einem kurzen koreanischen Kommentar schließen (was geändert wurde). Wenn nicht berechtigt oder unklar: koreanisch kommentieren, offen lassen. Falls `gh` nicht verfügbar ist, diesen Schritt überspringen.
 2. **2 neue Kapitel** zu den nächsten offenen Themen in `TOPICS.md` schreiben und in `lessons-auto.js` anhängen (`added` = heutiges Datum). Themen in `TOPICS.md` abhaken (`- [x]`, mit Datum). Wenn alle Themen erledigt sind, 3–5 neue sinnvolle Themen ergänzen (Pathologie-Labor-Alltag) und davon nehmen.
-3. **10–20 neue Wörter** aus diesen Kapiteln am Ende von `words.js` als neue Kategorie anhängen (`# Thema | 한국어`), nur Wörter, die es noch nicht gibt (Groß-/Kleinschreibung egal).
+3. **10–20 neue Wörter** aus diesen Kapiteln am Ende von `WORDS_AUTO_RAW` in `words-auto.js` als neue Kategorie anhängen (`# Thema | 한국어`), nur Wörter, die es noch nicht gibt (Groß-/Kleinschreibung egal).
 4. `sw.js`: Cache-Version +1.
 5. `node tests/check.mjs` → muss ✅ sein. Sonst Fehler beheben und erneut prüfen.
 6. Commit auf `main` (Nachricht auf Koreanisch, z. B. `새 장 2개: 갑상선, 간 병리 + 단어 15개`) und `git push origin main`.
+
+## Weitere Teile (nicht vom wöchentlichen Job ändern)
+
+- `worker/` – Cloudflare Worker `patho-deutsch-sync` (Backup/Sync der Lernstände, KV). Deploy: `cd worker && npx wrangler deploy`.
+- `bodymap.js` – Körper-Schema (SVG) für die Fachsprache-Sammlung.

@@ -107,39 +107,19 @@ nav.tabbar button.on { color: var(--accent); font-weight: 600; }
 .bar { flex: 1; height: 8px; border-radius: 99px; background: var(--soft); overflow: hidden; }
 .bar i { display: block; height: 100%; background: var(--accent); border-radius: 99px; transition: width .3s; }
 .count { flex: none; font-size: 14px; color: var(--muted); font-weight: 600; }
-.stage { flex: 1; position: relative; min-height: 0; perspective: 1400px; }
-.card3d { position: absolute; inset: 0; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
-.flip { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform .45s cubic-bezier(.2, .7, .2, 1); }
-.card3d.flipped .flip { transform: rotateY(180deg); }
-.face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 28px; background: var(--card);
-  box-shadow: 0 2px 4px rgba(43, 34, 56, .06), 0 14px 34px rgba(106, 79, 187, .12); padding: 22px 20px; display: flex; flex-direction: column; overflow: auto; }
-.face.back { transform: rotateY(180deg); }
-.face .cat, .pq .cat { align-self: flex-start; font-size: 12px; font-weight: 700; color: var(--accent); background: var(--soft); border-radius: 99px; padding: 3px 10px; }
-.face .mid { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 6px; padding: 16px 0; }
-.big-word { font-size: clamp(28px, 9vw, 40px); font-weight: 800; line-height: 1.15; letter-spacing: -.01em; overflow-wrap: anywhere; }
-.big-word .art { font-weight: 600; }
+.pq .cat { align-self: flex-start; font-size: 12px; font-weight: 700; color: var(--accent); background: var(--soft); border-radius: 99px; padding: 3px 10px; }
 .plural { font-size: 15px; color: var(--muted); }
 .hint { text-align: center; font-size: 13px; color: var(--muted); }
 .say { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--soft); color: var(--accent); margin-top: 6px; }
 .say svg { width: 22px; height: 22px; }
 .say.sm { width: 34px; height: 34px; margin: 0; flex: none; }
 .say.sm svg { width: 18px; height: 18px; }
-.back .ko-big { font-size: clamp(24px, 7vw, 32px); font-weight: 800; line-height: 1.25; text-align: center; margin: 10px 0 4px; }
-.back .de-small { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 18px; font-weight: 700; text-align: center; }
-.back .de-small .pl { display: block; font-size: 13px; font-weight: 500; color: var(--muted); }
 .info { margin-top: 14px; border-radius: var(--r-sm); background: var(--field); padding: 12px 14px; font-size: 15.5px; }
 .info h4 { margin: 0 0 4px; font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: .02em; }
 .info p { margin: 0; }
 .info.ex { display: flex; gap: 10px; align-items: flex-start; background: var(--eosin-soft); }
 .info.ex p { flex: 1; font-style: italic; }
 .info.ex mark { background: none; color: var(--eosin); font-weight: 700; font-style: normal; }
-.swipe-tag { position: absolute; top: 18px; padding: 4px 12px; border-radius: 10px; font-weight: 800; font-size: 18px; opacity: 0; pointer-events: none; z-index: 2; }
-.swipe-tag.know { right: 18px; color: var(--good); border: 3px solid var(--good); transform: rotate(8deg); }
-.swipe-tag.again { left: 18px; color: var(--bad); border: 3px solid var(--bad); transform: rotate(-8deg); }
-.answer-row { display: flex; gap: 10px; margin-top: 16px; }
-.answer-row button { flex: 1; min-height: 58px; border-radius: 18px; font-weight: 800; font-size: 17px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-.answer-row .again { background: var(--bad-soft); color: var(--bad); }
-.answer-row .know { background: var(--good-soft); color: var(--good); }
 .done-screen { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 10px; }
 .done-screen .emo { font-size: 64px; line-height: 1; }
 .done-screen h2 { margin: 6px 0 0; font-size: 26px; }
@@ -283,6 +263,28 @@ textarea.inp { min-height: 70px; resize: vertical; }
 .lc-hint { font-size: 14px; color: var(--muted); }
 .lc .info { align-self: stretch; text-align: left; margin-top: 8px; }
 .fb-word { font-weight: 800; }
+.miss-n { flex: none; min-width: 26px; height: 22px; border-radius: 99px; background: var(--bad-soft); color: var(--bad); font-size: 12px; font-weight: 800; display: grid; place-items: center; }
+.wk-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; text-align: center; }
+.wk-stats b { display: block; font-size: 22px; font-weight: 800; }
+.wk-stats span { font-size: 12px; color: var(--muted); }
+.month-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.month-head h2 { margin: 0; }
+.month-head .arrows { display: flex; gap: 6px; }
+.month-head .arrows button { width: 36px; height: 36px; border-radius: 50%; background: var(--field); font-size: 20px; font-weight: 700; }
+.cal-wk, .cal-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; }
+.cal-wk { font-size: 12px; color: var(--muted); text-align: center; margin-bottom: 4px; }
+.cal-d { aspect-ratio: 1; border-radius: 10px; background: var(--field); display: grid; place-items: center; font-size: 13px; color: var(--muted); }
+.cal-d.l1 { background: color-mix(in srgb, var(--accent) 22%, var(--field)); color: var(--ink); }
+.cal-d.l2 { background: color-mix(in srgb, var(--accent) 45%, var(--field)); color: var(--ink); }
+.cal-d.l3 { background: color-mix(in srgb, var(--accent) 70%, var(--field)); color: var(--accent-ink); }
+.cal-d.l4 { background: var(--accent); color: var(--accent-ink); }
+.cal-d.today { box-shadow: 0 0 0 2px var(--eosin); font-weight: 800; }
+.cal-d.future { opacity: .4; }
+.cal-legend { display: flex; align-items: center; justify-content: flex-end; gap: 4px; margin-top: 8px; font-size: 11px; color: var(--muted); }
+.cal-legend i { width: 12px; height: 12px; border-radius: 3px; background: var(--field); }
+.cal-legend i.l1 { background: color-mix(in srgb, var(--accent) 22%, var(--field)); } .cal-legend i.l2 { background: color-mix(in srgb, var(--accent) 45%, var(--field)); }
+.cal-legend i.l3 { background: color-mix(in srgb, var(--accent) 70%, var(--field)); } .cal-legend i.l4 { background: var(--accent); }
+.sync-code { font: 700 19px/1.5 ui-monospace, "SF Mono", Menlo, Consolas, monospace; letter-spacing: .04em; word-spacing: .2em; background: var(--field); border-radius: 12px; padding: 10px 12px; user-select: all; -webkit-user-select: all; overflow-wrap: anywhere; }
 .add-mini { flex: none; width: 32px; height: 32px; border-radius: 50%; background: var(--soft); color: var(--accent); font-size: 20px; font-weight: 700; line-height: 1; }
 .add-mini.done { background: var(--good-soft); color: var(--good); font-size: 15px; }
 /* 퀴즈 */
@@ -326,6 +328,7 @@ textarea.inp { min-height: 70px; resize: vertical; }
 <div id="toast" class="toast" hidden></div>
 
 <script src="words.js"></script>
+<script src="words-auto.js"></script>
 <script src="lessons.js"></script>
 <script src="lessons2.js"></script>
 <script src="lessons-auto.js"></script>
@@ -346,8 +349,114 @@ const KEY = 'patho-deutsch-v1';
 const INTERVAL = [0, 1, 3, 7, 14, 30, 60]; // 상자 번호별 다음 복습까지 날짜 수
 let S;
 try { S = JSON.parse(localStorage.getItem(KEY)) || {}; } catch { S = {}; }
-S = Object.assign({ prog: {}, day: null, streak: { last: -9, n: 0 }, set: { front: 'de', per: 10 }, mine: [], lessons: {}, tab: 'words' }, S);
-const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} };
+const DEFAULTS = () => ({ prog: {}, day: null, streak: { last: -9, n: 0 }, set: { per: 10 }, mine: [], lessons: {}, tab: 'words', log: {}, miss: {} });
+S = Object.assign(DEFAULTS(), S);
+delete S.set.front;
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} markDirty(); };
+
+// ── 백업·동기화: 기록 전체를 서버(patho-deutsch-sync)에 코드별로 보관 ──
+// 바뀔 때마다 2.5초 뒤 올리고, 앱을 열거나 다시 볼 때 서버가 더 새로우면 내려받음(마지막에 바꾼 기기 기준).
+const SYNC_URL = 'https://patho-deutsch-sync.weekly-meals-reader.workers.dev/s/';
+const SKEY = 'patho-deutsch-sync';
+let SY;
+try { SY = JSON.parse(localStorage.getItem(SKEY)) || {}; } catch { SY = {}; }
+if (!SY.key) {
+  const c = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789', r = crypto.getRandomValues(new Uint8Array(32));
+  SY = { key: [...r].map(x => c[x % c.length]).join(''), t: 0 };
+}
+const saveSY = () => { try { localStorage.setItem(SKEY, JSON.stringify(SY)); } catch {} };
+saveSY();
+let syncReady = false, dirtyEarly = false, pushTimer = null;
+function markDirty() {
+  if (!syncReady) { dirtyEarly = true; return; } // 처음 내려받기 전에는 표시만
+  SY.t = Date.now(); saveSY();
+  clearTimeout(pushTimer); pushTimer = setTimeout(pushSync, 2500);
+}
+async function pushSync() {
+  try {
+    const r = await fetch(SYNC_URL + SY.key, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ t: SY.t, data: S }) });
+    const j = await r.json();
+    if (j.ok) { SY.last = Date.now(); SY.err = ''; } else if (j.newer) await pullSync();
+  } catch { SY.err = '인터넷 연결 없음'; }
+  saveSY();
+}
+async function pullSync() {
+  try {
+    const r = await fetch(SYNC_URL + SY.key, { cache: 'no-store' }), j = await r.json();
+    if (j.data && j.t > SY.t) applyRemote(j);
+    else { if (!j.data || j.t < SY.t) pushSync(); SY.last = Date.now(); SY.err = ''; saveSY(); }
+  } catch { SY.err = '인터넷 연결 없음'; saveSY(); }
+}
+function applyRemote(j) {
+  if (!$('#overlay').hidden) { SY.pending = j; return; } // 공부 중이면 화면을 닫은 뒤에
+  S = Object.assign(DEFAULTS(), j.data);
+  try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {}
+  SY.t = j.t; SY.last = Date.now(); SY.err = ''; delete SY.pending; saveSY();
+  DICT = null;
+  S.tab === 'learn' ? renderLearn() : renderWords();
+  toast('다른 기기의 공부 기록을 불러왔어요');
+}
+async function startSync() {
+  await pullSync();
+  syncReady = true;
+  if (dirtyEarly) markDirty();
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && syncReady) pullSync(); });
+function syncStatus() {
+  if (SY.err) return SY.err;
+  if (!SY.last) return '아직 저장 전';
+  const min = Math.round((Date.now() - SY.last) / 6e4);
+  return min < 1 ? '방금 저장됨' : min < 60 ? `${min}분 전 저장` : `${Math.round(min / 60)}시간 전 저장`;
+}
+function openSync() {
+  const code = SY.key.match(/.{1,4}/g).join(' ');
+  openSheet(`<div class="sheet-head"><h2>백업·동기화</h2><button class="x-btn" id="sh-close" aria-label="닫기">${ICON.x}</button></div>
+    <div class="sheet-body">
+      <p class="sub" style="margin:0">공부 기록이 자동으로 서버에 저장돼요. 휴대폰을 바꾸거나 다른 기기(아이패드 등)에서 이어 하려면, 그 기기에서 아래 코드를 입력하세요.</p>
+      <div class="card" style="margin:12px 0">
+        <h2 style="margin-bottom:6px">이 기기의 동기화 코드</h2>
+        <div class="sync-code">${esc(code)}</div>
+        <div class="row" style="margin-top:10px"><button class="btn ghost small" id="sy-copy">코드 복사</button><button class="btn ghost small" id="sy-now">지금 저장</button></div>
+        <p class="sub" style="margin:8px 0 0">상태: ${esc(syncStatus())}</p>
+      </div>
+      <label class="f" for="sy-in">다른 기기의 코드로 연결</label>
+      <div class="row"><input class="inp" id="sy-in" placeholder="코드 32자리 (띄어쓰기 상관없음)" autocapitalize="off" autocorrect="off" spellcheck="false"><button class="btn" id="sy-link" style="flex:none">연결</button></div>
+      <p class="sub" style="margin:6px 0 0">연결하면 이 기기의 기록은 그 코드에 저장된 기록으로 바뀌어요.</p>
+      <label class="f">백업 파일</label>
+      <div class="row"><button class="btn ghost" id="sy-export">파일로 저장</button><label class="btn ghost" style="cursor:pointer">파일 불러오기<input type="file" id="sy-import" accept="application/json,.json" hidden></label></div>
+      <p class="sub" style="margin:10px 0 0">코드를 아는 사람은 기록을 볼 수 있으니 다른 사람에게 알려 주지 마세요.</p>
+    </div>`);
+  $('#sh-close').onclick = closeSheet;
+  $('#sy-copy').onclick = async () => { try { await navigator.clipboard.writeText(SY.key); toast('코드를 복사했어요'); } catch { toast('복사가 안 돼요. 길게 눌러 복사하세요'); } };
+  $('#sy-now').onclick = async () => { SY.t = Math.max(SY.t, 1); await pushSync(); openSync(); toast(SY.err || '저장했어요'); };
+  $('#sy-link').onclick = async () => {
+    const k = $('#sy-in').value.replace(/\s+/g, '');
+    if (!/^[A-Za-z0-9]{24,64}$/.test(k)) return toast('코드가 올바르지 않아요');
+    if (k === SY.key) return toast('이 기기의 코드예요');
+    try {
+      const j = await (await fetch(SYNC_URL + k, { cache: 'no-store' })).json();
+      if (!j.data) return toast('그 코드로 저장된 기록이 없어요');
+      if (!confirm('이 기기의 공부 기록을 그 코드의 기록으로 바꿀까요?')) return;
+      SY = { key: k, t: 0 }; saveSY();
+      closeSheet(); applyRemote(j);
+    } catch { toast('인터넷 연결을 확인해 주세요'); }
+  };
+  $('#sy-export').onclick = () => {
+    const blob = new Blob([JSON.stringify({ app: 'patho-deutsch', t: Date.now(), data: S })], { type: 'application/json' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = `patho-deutsch-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  };
+  $('#sy-import').onchange = async e => {
+    const f = e.target.files[0]; if (!f) return;
+    try {
+      const j = JSON.parse(await f.text());
+      if (j.app !== 'patho-deutsch' || !j.data) throw 0;
+      if (!confirm('이 기기의 공부 기록을 백업 파일의 기록으로 바꿀까요?')) return;
+      S = Object.assign(DEFAULTS(), j.data); DICT = null; save(); closeSheet(); renderWords(); toast('백업 파일을 불러왔어요');
+    } catch { toast('백업 파일을 읽을 수 없어요'); }
+  };
+}
 try { navigator.storage?.persist?.(); } catch {}
 
 const today = () => { const d = new Date(); return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5); };
@@ -356,7 +465,7 @@ const byId = id => allWords().find(w => w.id === id);
 
 function pickNew(k, exclude = []) {
   const out = [];
-  for (const w of allWords()) {
+  for (const w of [...S.mine, ...WORDS.filter(x => x.auto), ...WORDS.filter(x => !x.auto)]) {
     if (out.length >= k) break;
     if (!S.prog[w.id] && !exclude.includes(w.id)) out.push(w.id);
   }
@@ -459,9 +568,9 @@ function renderWords() {
   const C = 2 * Math.PI * 46, frac = total ? done / total : 0;
   let title, text, btn;
   if (!total) { title = '모든 단어를 배웠어요!'; text = '내 단어를 추가하거나 복습을 해 보세요.'; btn = ''; }
-  else if (finished && due) { title = '오늘 단어 완료 🎉'; text = `복습할 단어 ${due}개가 남아 있어요.`; btn = `<button class="btn" id="review-first">복습 ${due}개 시작</button>`; }
+  else if (finished && due) { title = '오늘 단어 완료 🎉'; text = `복습할 단어 ${due}개가 남아 있어요.`; btn = `<button class="btn" id="review-first">복습 ${Math.min(due, REVIEW_MAX)}개 시작</button>`; }
   else if (finished) { title = '오늘 단어 완료 🎉'; text = '내일 새 단어가 나와요. 더 하고 싶으면 아래 버튼을 눌러요.'; btn = `<button class="btn ghost" id="more10">${S.set.per}개 더 하기</button>`; }
-  else if (due) { title = '복습 먼저!'; text = `어제까지 배운 단어 ${due}개를 먼저 떠올려 보고, 새 단어 ${total - done}개로 가요.`; btn = `<button class="btn" id="review-first">복습 ${due}개 시작</button>`; }
+  else if (due) { title = '복습 먼저!'; text = `어제까지 배운 단어 ${due}개를 먼저 떠올려 보고, 새 단어 ${total - done}개로 가요.`; btn = `<button class="btn" id="review-first">복습 ${Math.min(due, REVIEW_MAX)}개 시작</button>`; }
   else if (done) { title = '오늘의 단어'; text = `${total - done}개 남았어요.`; btn = '<button class="btn" id="start">이어서 하기</button>'; }
   else { title = '오늘의 단어'; text = `새 단어 ${total}개 · 5개씩 소개 → 고르기 → 쓰기`; btn = '<button class="btn" id="start">시작하기</button>'; }
   $('#tab-words').innerHTML = `
@@ -480,11 +589,13 @@ function renderWords() {
     </div>
     <div class="card list-btns">
       <button class="menu-btn" id="p-art"><span class="ic">🎯</span><span>der · die · das 퀴즈<small>관사 맞히기 20문제</small></span><span class="go">›</span></button>
+      <button class="menu-btn" id="weak"><span class="ic">😵</span><span>자주 틀리는 단어<small>${weakIds().length ? `${weakIds().length}개 · 모아서 다시 연습` : '아직 없어요'}</small></span><span class="go">›</span></button>
       <button class="menu-btn" id="p-cloze"><span class="ic">✏️</span><span>빈칸 채우기<small>예문 속 단어 맞히기 10문제</small></span><span class="go">›</span></button>
     </div>
     <div class="card list-btns">
-      <button class="menu-btn" id="review" ${due ? '' : 'disabled style="opacity:.55"'}><span class="ic">🔁</span><span>복습하기<small>${due ? `오늘 다시 볼 단어 ${due}개` : '지금은 복습할 단어가 없어요'}</small></span><span class="go">›</span></button>
+      <button class="menu-btn" id="review" ${due ? '' : 'disabled style="opacity:.55"'}><span class="ic">🔁</span><span>복습하기<small>${due ? `오늘 다시 볼 단어 ${due}개${due > REVIEW_MAX ? ` · ${REVIEW_MAX}개씩 나눠서` : ''}` : '지금은 복습할 단어가 없어요'}</small></span><span class="go">›</span></button>
       <button class="menu-btn" id="fach"><span class="ic">📗</span><span>Fachsprache 모음<small>Kolon = Dickdarm · 장기별 ${FACH.reduce((a, g) => a + g.rows.length, 0)}개</small></span><span class="go">›</span></button>
+      <button class="menu-btn" id="cal"><span class="ic">📅</span><span>학습 기록<small>달력 · 최근 7일 · 정답률</small></span><span class="go">›</span></button>
       <button class="menu-btn" id="list"><span class="ic">📖</span><span>단어 목록<small>분야별로 보기 · 검색</small></span><span class="go">›</span></button>
       <button class="menu-btn" id="add"><span class="ic">➕</span><span>내 단어 추가<small>일하다 만난 단어를 넣어요</small></span><span class="go">›</span></button>
     </div>
@@ -495,6 +606,7 @@ function renderWords() {
         <button class="chip ${S.set.autoSay === false ? 'on' : ''}" data-auto="0">끄기</button></div></div>
       <div class="set-line"><span>하루 새 단어</span><div class="seg">
         ${[5, 10, 15, 20].map(n => `<button class="chip ${S.set.per === n ? 'on' : ''}" data-per="${n}">${n}</button>`).join('')}</div></div>
+      <div class="set-line"><span>백업·동기화</span><button class="chip" id="sync-btn">☁️ ${esc(syncStatus())} ›</button></div>
       <div class="set-line"><span>발음 목소리</span><button class="chip" id="voice-btn">${esc(chosenVoice()?.name || '휴대폰 기본')} ›</button></div>
     </div>`;
   $('#start')?.addEventListener('click', () => startStudy('today'));
@@ -506,11 +618,14 @@ function renderWords() {
   });
   $('#review').onclick = () => due && startStudy('review');
   $('#list').onclick = openList;
+  $('#weak').onclick = openWeak;
+  $('#cal').onclick = openCalendar;
   $('#fach').onclick = openFach;
   $('#p-art').onclick = startArticle;
   $('#p-cloze').onclick = () => startCloze(S.set.cloze || 'choice');
   $('#add').onclick = () => openAdd();
   $('#voice-btn').onclick = openVoice;
+  $('#sync-btn').onclick = openSync;
   document.querySelectorAll('[data-auto]').forEach(b => b.onclick = () => { S.set.autoSay = b.dataset.auto === '1'; save(); renderWords(); });
   document.querySelectorAll('[data-per]').forEach(b => b.onclick = () => {
     const n = +b.dataset.per; S.set.per = n;
@@ -523,15 +638,24 @@ function renderWords() {
 // ═════════ 단어 공부 (단계식) ═════════
 // 오늘의 단어: 5개씩 묶어서 ① 소개 → ② 뜻 고르기(독→한) → ③ 단어 고르기(한→독) → ④ 직접 쓰기.
 // 틀린 문제는 몇 문제 뒤에 다시 나오고, 4단계를 다 맞혀야 그 단어가 '오늘 완료'.
-// 복습: 자가 평가 대신 직접 떠올리는 문제(상자가 높을수록 어려운 문제). 맞히면 다음 복습이 멀어지고, 틀리면 내일 다시.
+// 복습: 직접 떠올리는 문제(상자가 높을수록 어려운 문제), 한 번에 최대 REVIEW_MAX개. 맞히면 다음 복습이 멀어지고, 틀리면 내일 다시.
+// 약한 단어: 자주 틀린 단어를 단어 고르기 + 직접 쓰기로 다시 연습.
 let ST = null;
-const CHUNK = 5;
+const CHUNK = 5, REVIEW_MAX = 20;
 function startStudy(mode) {
   ensureDay();
-  const ids = mode === 'today' ? S.day.ids.filter(id => !S.day.done.includes(id)) : shuffle(dueIds());
+  let ids;
+  if (mode === 'today') ids = S.day.ids.filter(id => !S.day.done.includes(id));
+  else if (mode === 'review') ids = shuffle(dueIds()).slice(0, REVIEW_MAX);
+  else ids = weakIds().slice(0, 10);
   if (!ids.length) return;
   ST = { mode, ids, chunk: 0, queue: [], doneTasks: 0, totalTasks: 0, missed: new Set(), typedOk: new Set(), wordsDone: 0, ans: null };
-  mode === 'today' ? nextChunk() : buildReview();
+  if (mode === 'today') { ST.totalTasks = ids.length * 4; nextChunk(); }
+  else if (mode === 'review') { ST.queue = ids.map(id => ({ id, t: reviewTask(byId(id)), first: true })); ST.totalTasks = ST.queue.length; }
+  else {
+    ST.queue = [...shuffle(ids.slice()).map(id => ({ id, t: 'pick-de' })), ...shuffle(ids.slice()).map(id => ({ id, t: 'type', first: true }))];
+    ST.totalTasks = ST.queue.length;
+  }
   openOverlay();
   renderTask();
 }
@@ -544,7 +668,6 @@ function nextChunk() {
   shuffle(words.slice()).forEach(id => q.push({ id, t: 'pick-de' }));
   shuffle(words.slice()).forEach(id => q.push({ id, t: 'type' }));
   ST.queue = q;
-  ST.totalTasks += q.length;
 }
 function reviewTask(w) {
   const b = S.prog[w.id]?.b || 1;
@@ -552,13 +675,10 @@ function reviewTask(w) {
   if (b === 2) return 'type';
   return clozeOf(w) && Math.random() < .6 ? 'cloze' : 'type';
 }
-function buildReview() {
-  ST.queue = ST.ids.map(id => ({ id, t: reviewTask(byId(id)), first: true }));
-  ST.totalTasks = ST.queue.length;
-}
 function closeStudy() {
   window.speechSynthesis?.cancel();
   $('#overlay').hidden = true; document.body.style.overflow = ''; ST = null; renderWords();
+  if (SY.pending) applyRemote(SY.pending);
 }
 const autoSay = text => { if (S.set.autoSay !== false) speak(text); };
 const LABEL = { intro: '새 단어', 'pick-ko': '뜻 고르기', 'pick-de': '단어 고르기', type: '직접 쓰기', cloze: '빈칸 쓰기' };
@@ -595,11 +715,12 @@ function renderTask() {
   }
   const task = ST.queue[0], w = byId(task.id);
   if (!w) { ST.queue.shift(); return renderTask(); }
-  const pct = ST.totalTasks ? (ST.doneTasks / ST.totalTasks) * 100 : 0;
+  const pct = ST.totalTasks ? Math.min(100, (ST.doneTasks / ST.totalTasks) * 100) : 0;
   const top = `<div class="topbar"><button class="x-btn" id="close" aria-label="닫기">${ICON.x}</button>
     <div class="bar"><i style="width:${pct}%"></i></div><span class="count">${LABEL[task.t]}</span></div>`;
   const pl = plural(w), plHtml = pl ? `<div class="plural">${isVerb(w) ? '' : 'Pl. '}${esc(pl)}</div>` : '';
   const a = ST.ans; // { ok, note, picked }
+  const typing = task.t === 'type' || task.t === 'cloze';
   let body = '';
   if (task.t === 'intro') {
     body = `<div class="lc">
@@ -631,15 +752,16 @@ function renderTask() {
           : `<p class="lc-ask">독일어로 써 보세요${w.art ? ' (관사와 함께)' : ''}</p><div class="lc-word">${esc(w.ko)}</div>${!a && task.hint ? `<div class="lc-hint">첫 글자: ${esc((w.art ? w.art + ' ' : '') + w.de.slice(0, 2))}…</div>` : ''}`}
     </div>
     <form id="tf" class="row" style="margin-top:12px" autocomplete="off">
-      <input class="inp" id="ti" placeholder="${w.art && !c ? 'z. B. die Probe' : '독일어'}" autocapitalize="off" autocorrect="off" spellcheck="false" ${a ? 'disabled' : ''} value="${esc(task.typed || '')}">
-      <button class="btn" style="flex:none" ${a ? 'disabled' : ''}>확인</button></form>
+      <input class="inp" id="ti" placeholder="${w.art && !c ? 'z. B. die Probe' : '독일어'}" autocapitalize="off" autocorrect="off" spellcheck="false"
+        enterkeyhint="${a ? 'next' : 'go'}" ${a ? 'readonly' : ''} value="${esc(task.typed || '')}">
+      <button class="btn" style="flex:none">${a ? '다음' : '확인'}</button></form>
     ${!a && !c && !task.hint ? '<button class="chip" id="hint" style="margin-top:10px">💡 첫 글자 보기</button>' : ''}`;
   }
   if (a) {
     body += `<div class="feedback ${a.ok ? 'ok' : 'no'}"><b>${a.ok ? '✓ Richtig!' : '✗ 아쉬워요'}</b>
       <span class="fb-word">${wordHtml(w)}</span> · ${esc(w.ko)}${a.note ? `<br><span class="sub">${esc(a.note)}</span>` : ''}
       ${!a.ok ? '<br><span class="sub">조금 뒤에 다시 나와요</span>' : ''}</div>
-      ${a.ok && task.t.startsWith('pick') ? '' : '<button class="btn wide" id="next" style="margin-top:12px">다음</button>'}`;
+      ${(a.ok && task.t.startsWith('pick')) || typing ? '' : '<button class="btn wide" id="next" style="margin-top:12px">다음</button>'}`;
   }
   inner.innerHTML = top + body;
   $('#close').onclick = closeStudy;
@@ -647,8 +769,10 @@ function renderTask() {
   $('#next')?.addEventListener('click', advance);
   $('#hint')?.addEventListener('click', () => { task.hint = true; renderTask(); });
   inner.querySelectorAll('[data-o]').forEach(b => b.onclick = () => answer(b.dataset.o === w.id, '', b.dataset.o));
+  // 쓰기: 확인(엔터) → 채점, 한 번 더 누르면 다음 문제. 키보드가 닫히지 않게 같은 터치 안에서 바로 다음 칸에 커서를 둠
   $('#tf')?.addEventListener('submit', e => {
     e.preventDefault();
+    if (ST.ans) return advance();
     const v = $('#ti').value; if (!v.trim()) return;
     task.typed = v;
     const c = task.t === 'cloze' ? clozeOf(w) : null;
@@ -656,11 +780,12 @@ function renderTask() {
     answer(r.ok, r.note);
   });
   if (task.t === 'intro') autoSay(sayText(w));
-  if ((task.t === 'type' || task.t === 'cloze') && !a) setTimeout(() => $('#ti')?.focus(), 60);
+  if (typing) { const ti = $('#ti'); ti?.focus({ preventScroll: true }); if (a) ti?.setSelectionRange?.(ti.value.length, ti.value.length); }
 }
 function answer(ok, note, picked) {
   const task = ST.queue[0], w = byId(task.id), t = today();
   ST.ans = { ok, note, picked };
+  bumpMiss('miss', w.id, ok ? 0 : 1);
   if (!ok) {
     ST.missed.add(w.id);
     // 3문제 뒤에 같은 문제를 다시 (보기 순서는 새로)
@@ -672,15 +797,17 @@ function answer(ok, note, picked) {
     const p = S.prog[w.id] || { b: 1 };
     if (ok) { const b = Math.min((p.b || 1) + 1, INTERVAL.length - 1); S.prog[w.id] = { b, d: t + INTERVAL[b] }; ST.wordsDone++; }
     else S.prog[w.id] = { b: 1, d: t + 1 };
-    save();
+    logStudy('r', ok);
   }
+  if (ST.mode === 'weak' && task.first) { if (ok) bumpMiss('miss', w.id, -1); logStudy('p', ok); }
   if (ok && task.t === 'type') ST.typedOk.add(w.id);
   if (ST.mode === 'today' && ok && ST.typedOk.has(w.id) && !ST.queue.slice(1).some(x => x.id === w.id)) {
     S.prog[w.id] = { b: 1, d: t + 1 };
     if (!S.day.done.includes(w.id)) S.day.done.push(w.id);
     ST.wordsDone++;
-    save();
+    logStudy('n', !ST.missed.has(w.id));
   }
+  save();
   autoSay(sayText(w));
   renderTask();
   if (ok && task.t.startsWith('pick')) setTimeout(() => { if (ST && ST.queue[0] === task) advance(); }, 750);
@@ -692,22 +819,20 @@ function advance() {
   renderTask();
 }
 function renderDone() {
-  if (ST.mode === 'today') {
-    const t = today();
-    if (S.streak.last !== t) { S.streak.n = S.streak.last === t - 1 ? S.streak.n + 1 : 1; S.streak.last = t; save(); }
-  }
-  const due = dueIds().length, n = ST.ids.length, miss = [...ST.missed].map(byId).filter(Boolean);
+  const due = dueIds().length, n = ST.ids.length, miss = [...ST.missed].map(byId).filter(Boolean), mode = ST.mode;
+  const head = { today: ['🎉', '오늘 단어 끝!'], review: ['💪', '복습 끝!'], weak: ['🧠', '약한 단어 연습 끝!'] }[mode];
+  const tip = { today: '내일 복습에서 한 번 더 나와요. 하루 뒤 복습이 가장 중요해요!', review: '맞힌 단어는 다음 복습까지 간격이 길어져요.', weak: '맞힌 단어는 약한 단어 목록에서 조금씩 빠져요.' }[mode];
   $('#overlay-inner').innerHTML = `
     <div class="topbar"><button class="x-btn" id="close" aria-label="닫기">${ICON.x}</button><div class="bar"><i style="width:100%"></i></div><span class="count">완료</span></div>
     <div class="done-screen pd">
-      <div class="emo">${ST.mode === 'today' ? '🎉' : '💪'}</div>
-      <h2>${ST.mode === 'today' ? '오늘 단어 끝!' : '복습 끝!'}</h2>
-      <p>${n}개 · ${miss.length ? `헷갈린 단어 ${miss.length}개` : '한 번도 안 틀렸어요'}${ST.mode === 'today' ? ` · 🔥 ${streakNow()}일째` : ''}</p>
+      <div class="emo">${head[0]}</div>
+      <h2>${head[1]}</h2>
+      <p>${n}개 · ${miss.length ? `헷갈린 단어 ${miss.length}개` : '한 번도 안 틀렸어요'} · 🔥 ${streakNow()}일째</p>
       ${miss.length ? `<ul class="wl">${miss.map(w => `<li><div class="wl-row"><span class="w">${wordHtml(w)}</span><span class="k">${esc(w.ko)}</span></div></li>`).join('')}</ul>` : ''}
-      <p class="sub" style="margin:0 0 12px">${ST.mode === 'today' ? '내일 복습에서 한 번 더 나와요. 하루 뒤 복습이 가장 중요해요!' : '맞힌 단어는 다음 복습까지 간격이 길어져요.'}</p>
+      <p class="sub" style="margin:0 0 12px">${tip}</p>
       <div class="btns">
-        ${due ? `<button class="btn" id="go-review">복습하기 (${due})</button>` : ''}
-        ${ST.mode === 'today' ? `<button class="btn ghost" id="go-more">${S.set.per}개 더 하기</button>` : ''}
+        ${due ? `<button class="btn" id="go-review">복습하기 (${Math.min(due, REVIEW_MAX)}${due > REVIEW_MAX ? ` / 남은 ${due}` : ''})</button>` : ''}
+        ${mode === 'today' ? `<button class="btn ghost" id="go-more">${S.set.per}개 더 하기</button>` : ''}
         <button class="btn ghost" id="go-close">닫기</button>
       </div>
     </div>`;
@@ -717,6 +842,91 @@ function renderDone() {
     const more = pickNew(S.set.per, S.day.ids);
     if (!more.length) return toast('새 단어가 더 없어요');
     S.day.ids.push(...more); save(); startStudy('today');
+  });
+}
+
+// ═════════ 자주 틀리는 단어 ═════════
+// S.miss[id] = 틀린 횟수 (공부·복습·연습에서 틀릴 때마다 +1, 약한 단어 연습에서 맞히면 -1)
+const weakIds = () => Object.entries(S.miss || {}).filter(([id, n]) => n >= 2 && byId(id)).sort((a, b) => b[1] - a[1]).map(([id]) => id);
+function openWeak() {
+  const ids = weakIds();
+  openSheet(`<div class="sheet-head"><h2>자주 틀리는 단어</h2><button class="x-btn" id="sh-close" aria-label="닫기">${ICON.x}</button></div>
+    <div class="sheet-body">
+      <p class="sub" style="margin:0 0 10px">두 번 이상 틀린 단어예요. 연습에서 맞히면 숫자가 줄고, 1 이하가 되면 목록에서 빠져요.</p>
+      ${ids.length ? `<button class="btn wide" id="weak-go" style="margin-bottom:12px">약한 단어 ${Math.min(10, ids.length)}개 연습하기</button>
+        <ul class="wl">${ids.map(id => { const w = byId(id); return `<li><div class="wl-row"><span class="miss-n">${S.miss[id]}</span><span class="w">${wordHtml(w)}</span><span class="k">${esc(w.ko)}</span></div></li>`; }).join('')}</ul>`
+      : '<p class="empty">아직 자주 틀린 단어가 없어요 👍</p>'}
+    </div>`);
+  $('#sh-close').onclick = closeSheet;
+  $('#weak-go')?.addEventListener('click', () => { closeSheet(); startStudy('weak'); });
+}
+
+// ═════════ 학습 기록 (달력·통계) ═════════
+// S.log[날짜번호] = { n: 새로 끝낸 단어, r: 복습 문제, p: 연습 문제, ok: 맞힌 수, all: 푼 수 }
+function logStudy(kind, ok) {
+  const t = today();
+  S.log = S.log || {};
+  const e = S.log[t] = S.log[t] || { n: 0, r: 0, p: 0, ok: 0, all: 0 };
+  e[kind]++; e.all++; if (ok) e.ok++;
+  // 연속 일수: 무엇이든 공부한 날이면 이어짐
+  if (S.streak.last !== t) {
+    S.streak.n = S.streak.last === t - 1 ? S.streak.n + 1 : 1;
+    S.streak.last = t;
+    S.streak.best = Math.max(S.streak.best || 0, S.streak.n);
+  }
+}
+let CAL = 0; // 0 = 이번 달, -1 = 지난달 …
+function openCalendar() { CAL = 0; openOverlay(); renderCalendar(); }
+function renderCalendar() {
+  const now = new Date(), base = new Date(now.getFullYear(), now.getMonth() + CAL, 1);
+  const y = base.getFullYear(), m = base.getMonth(), days = new Date(y, m + 1, 0).getDate();
+  const dn = d => Math.floor(Date.UTC(y, m, d) / 864e5), t = today();
+  const lead = (new Date(y, m, 1).getDay() + 6) % 7; // 월요일 시작
+  const log = S.log || {};
+  const lvl = e => (!e ? 0 : e.all >= 40 ? 4 : e.all >= 20 ? 3 : e.all >= 8 ? 2 : 1);
+  let cells = '';
+  for (let i = 0; i < lead; i++) cells += '<div></div>';
+  for (let d = 1; d <= days; d++) {
+    const k = dn(d), e = log[k];
+    cells += `<button class="cal-d l${lvl(e)} ${k === t ? 'today' : ''} ${k > t ? 'future' : ''}" data-k="${k}"><span>${d}</span></button>`;
+  }
+  // 최근 7일 합계
+  const week = { n: 0, r: 0, p: 0, ok: 0, all: 0, days: 0 };
+  for (let k = t - 6; k <= t; k++) { const e = log[k]; if (!e) continue; week.days++; for (const f of ['n', 'r', 'p', 'ok', 'all']) week[f] += e[f]; }
+  const monthSum = Object.entries(log).filter(([k]) => k >= dn(1) && k <= dn(days)).reduce((a, [, e]) => (a.days++, a.all += e.all, a), { days: 0, all: 0 });
+  const learned = learnedCount(), strong = Object.values(S.prog).filter(p => p.b >= 4).length;
+  $('#overlay-inner').innerHTML = `
+    <div class="topbar"><button class="x-btn" id="close" aria-label="닫기">${ICON.x}</button><h2 style="flex:1;margin:0;font-size:20px;font-weight:800">학습 기록</h2></div>
+    <div class="tiles">
+      <div class="tile"><b class="num">${streakNow()}</b><span>🔥 연속 일수</span></div>
+      <div class="tile"><b class="num">${S.streak.best || streakNow()}</b><span>🏆 최고 기록</span></div>
+      <div class="tile"><b class="num">${learned}</b><span>📚 배운 단어</span></div>
+    </div>
+    <div class="card">
+      <h2>최근 7일</h2>
+      <div class="wk-stats">
+        <div><b class="num">${week.days}</b><span>공부한 날</span></div>
+        <div><b class="num">${week.n}</b><span>새 단어</span></div>
+        <div><b class="num">${week.r}</b><span>복습</span></div>
+        <div><b class="num">${week.all ? Math.round((week.ok / week.all) * 100) : 0}%</b><span>정답률</span></div>
+      </div>
+      <p class="sub" style="margin:8px 0 0">잘 아는 단어(복습 4번 이상 맞힘) <b>${strong}</b>개</p>
+    </div>
+    <div class="card">
+      <div class="month-head"><h2>${y}년 ${m + 1}월</h2><div class="arrows">
+        <button id="cal-prev" aria-label="이전 달">‹</button><button id="cal-next" aria-label="다음 달" ${CAL >= 0 ? 'disabled style="opacity:.35"' : ''}>›</button></div></div>
+      <div class="cal-wk">${['월', '화', '수', '목', '금', '토', '일'].map(x => `<span>${x}</span>`).join('')}</div>
+      <div class="cal-grid">${cells}</div>
+      <div class="cal-legend"><span>적게</span><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i><span>많이</span></div>
+      <p class="sub" id="cal-info" style="margin:10px 0 0">이번 달 ${monthSum.days}일 공부 · 문제 ${monthSum.all}개. 날짜를 누르면 그날 기록이 나와요.</p>
+    </div>`;
+  $('#close').onclick = closeStudy;
+  $('#cal-prev').onclick = () => { CAL--; renderCalendar(); };
+  $('#cal-next').onclick = () => { if (CAL < 0) { CAL++; renderCalendar(); } };
+  $('#overlay-inner').querySelectorAll('[data-k]').forEach(b => b.onclick = () => {
+    const k = +b.dataset.k, e = log[k], d = new Date(k * 864e5);
+    const label = `${d.getUTCMonth() + 1}월 ${d.getUTCDate()}일`;
+    $('#cal-info').innerHTML = e ? `<b>${label}</b> · 새 단어 ${e.n} · 복습 ${e.r} · 연습 ${e.p} · 정답률 ${Math.round((e.ok / e.all) * 100)}%` : `<b>${label}</b> · 기록 없음`;
   });
 }
 
@@ -776,6 +986,7 @@ function renderArticle() {
     PR.picked = b.dataset.a;
     const ok = PR.picked === w.art;
     if (ok) { PR.score++; bumpMiss('artMiss', w.id, -1); } else { PR.wrong.push(w); bumpMiss('artMiss', w.id, 1); }
+    logStudy('p', ok);
     save(); renderArticle();
     if (ok) setTimeout(() => { if (PR && PR.kind === 'art' && PR.words[PR.i] === w) { PR.i++; PR.picked = null; renderArticle(); } }, 650);
   });
@@ -830,7 +1041,8 @@ function renderCloze() {
   $('#hint')?.addEventListener('click', () => { PR.hint = true; renderCloze(); });
   const answer = good => {
     PR.picked = good;
-    if (good) { PR.score++; bumpMiss('clozeMiss', w.id, -1); } else { PR.wrong.push(w); bumpMiss('clozeMiss', w.id, 1); }
+    if (good) { PR.score++; bumpMiss('clozeMiss', w.id, -1); } else { PR.wrong.push(w); bumpMiss('clozeMiss', w.id, 1); bumpMiss('miss', w.id, 1); }
+    logStudy('p', good);
     save(); renderCloze();
   };
   inner.querySelectorAll('[data-o]').forEach(b => b.onclick = () => { PR.pickedId = b.dataset.o; answer(b.dataset.o === w.id); });
@@ -1064,7 +1276,7 @@ function dict() {
   // Fachsprache 모음의 의학 용어도 (Kolon → 대장 = der Dickdarm)
   for (const g of FACH) for (const [al, fa, , , ko] of g.rows) for (const part of fa.split(' / ')) {
     const name = part.replace(/\s*\(.*\)/, '').trim();
-    if (/^[\p{L}-]+$/u.test(name) && !name.startsWith('-')) add(name, { term: { art: '', de: name, ko: ko + ' (= ' + al + ')' } });
+    if (/^[\p{L}-]+$/u.test(name) && !name.startsWith('-')) add(name, { exact: name.length <= 5, term: { art: '', de: name, ko: ko + ' (= ' + al + ')' } });
   }
   DICT = { n: S.mine.length, m };
   return m;
@@ -1075,7 +1287,8 @@ function lookupWord(tok) {
   for (const s of SUFFIX) {
     if (s && !t.endsWith(s)) continue;
     const base = s ? t.slice(0, -s.length) : t;
-    if (base.length >= 3 && m.has(base)) return m.get(base);
+    const e = m.get(base);
+    if (base.length >= 3 && e && !(s && e.exact)) return e;
   }
   return null;
 }
@@ -1268,6 +1481,7 @@ function renderQuiz(box) {
   $('#lb').onclick = () => { LV = { type: 'lesson', id: l.id }; renderLearn(); window.scrollTo(0, 0); };
   box.querySelectorAll('[data-o]').forEach(b => b.onclick = () => {
     LV.picked = +b.dataset.o; if (LV.picked === q.c) LV.score++;
+    logStudy('p', LV.picked === q.c); save();
     renderLearn();
   });
   $('#qn')?.addEventListener('click', () => { LV.i++; LV.picked = null; renderLearn(); window.scrollTo(0, 0); });
@@ -1287,6 +1501,7 @@ document.addEventListener('visibilitychange', () => {
 });
 document.body.insertAdjacentHTML('beforeend', BM.defs);
 setTab(S.tab === 'learn' ? 'learn' : 'words');
+startSync();
 
 if ('serviceWorker' in navigator && location.protocol === 'https:') {
   navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).catch(() => {});

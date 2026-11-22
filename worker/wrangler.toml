@@ -1,0 +1,8 @@
+name = "patho-deutsch-sync"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+
+# Patho Deutsch 공부 기록 백업: data:{동기화 코드} → { t, data }
+kv_namespaces = [
+  { binding = "STORE", id = "3745afd3b65a49379aa74c620f31141a" }
+]
