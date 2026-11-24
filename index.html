@@ -99,15 +99,14 @@ nav.tabbar button.on { color: var(--accent); font-weight: 600; }
 
 /* ── 공부 화면 (카드) ── */
 .overlay { position: fixed; inset: 0; z-index: 20; background: var(--bg); display: flex; flex-direction: column;
-  padding: calc(10px + env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom)); }
-.overlay-inner { width: 100%; max-width: 540px; margin: 0 auto; flex: 1; display: flex; flex-direction: column; min-height: 0; overflow-y: auto; overflow-x: hidden; }
+  padding: calc(10px + env(safe-area-inset-top)) calc(10px + env(safe-area-inset-right)) calc(16px + env(safe-area-inset-bottom)) calc(10px + env(safe-area-inset-left)); }
+.overlay-inner { width: 100%; max-width: 540px; margin: 0 auto; flex: 1; display: flex; flex-direction: column; min-height: 0; overflow-y: auto; overflow-x: hidden; padding: 4px 6px 6px; }
 .topbar { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
 .x-btn { flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--card); box-shadow: var(--shadow); color: var(--muted); }
 .x-btn svg { width: 20px; height: 20px; }
 .bar { flex: 1; height: 8px; border-radius: 99px; background: var(--soft); overflow: hidden; }
 .bar i { display: block; height: 100%; background: var(--accent); border-radius: 99px; transition: width .3s; }
 .count { flex: none; font-size: 14px; color: var(--muted); font-weight: 600; }
-.pq .cat { align-self: flex-start; font-size: 12px; font-weight: 700; color: var(--accent); background: var(--soft); border-radius: 99px; padding: 3px 10px; }
 .plural { font-size: 15px; color: var(--muted); }
 .hint { text-align: center; font-size: 13px; color: var(--muted); }
 .say { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--soft); color: var(--accent); margin-top: 6px; }
@@ -152,21 +151,8 @@ nav.tabbar button.on { color: var(--accent); font-weight: 600; }
 .wl .more p { margin: 4px 0; }
 .wl .more .ex { font-style: italic; color: var(--muted); }
 /* ── 연습: 관사 퀴즈 · 빈칸 채우기 ── */
-.pq { flex: 1; min-height: 230px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; position: relative;
-  background: var(--card); border-radius: 28px; box-shadow: 0 2px 4px rgba(43, 34, 56, .06), 0 14px 34px rgba(106, 79, 187, .12); padding: 22px 20px; }
-.pq .cat { position: absolute; top: 18px; left: 18px; }
-.pq-word { font-size: clamp(30px, 10vw, 42px); font-weight: 800; line-height: 1.15; overflow-wrap: anywhere; }
-.blank-art { color: var(--muted); font-weight: 600; letter-spacing: .05em; }
-.pq-ko { color: var(--muted); font-size: 16px; }
-.art-btns { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 16px; }
-.art-btn { min-height: 76px; border-radius: 20px; font-size: 24px; font-weight: 800; background: var(--card); box-shadow: var(--shadow); border: 3px solid transparent; }
-.art-btn.der { color: var(--der); } .art-btn.die { color: var(--die); } .art-btn.das { color: var(--das); }
-.art-btn.right { border-color: var(--good); background: var(--good-soft); }
-.art-btn.wrong { border-color: var(--bad); background: var(--bad-soft); }
-.art-btn.dim { opacity: .4; }
-.art-btn:disabled { cursor: default; }
 .cz { margin-bottom: 14px; }
-.cz-sent { font-size: 19px; line-height: 1.65; margin: 0 0 12px; }
+.cz-sent { overflow-wrap: anywhere; word-break: break-word; align-self: stretch; font-size: 19px; line-height: 1.65; margin: 0 0 12px; }
 .gap { display: inline-block; min-width: 96px; border-bottom: 3px solid var(--accent); margin: 0 3px; color: var(--accent); font-weight: 700; }
 .cz-sent mark { background: none; font-weight: 800; } .cz-sent mark.ok { color: var(--good); } .cz-sent mark.no { color: var(--bad); }
 .cz-foot { display: flex; align-items: center; gap: 10px; }
@@ -183,7 +169,8 @@ nav.tabbar button.on { color: var(--accent); font-weight: 600; }
 .legend { display: flex; gap: 14px; font-size: 12px; color: var(--muted); margin: 10px 2px 0; }
 .legend i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; vertical-align: 1px; }
 label.f { display: block; font-size: 13px; font-weight: 700; color: var(--muted); margin: 12px 0 5px; }
-.inp { width: 100%; min-height: 46px; border-radius: 14px; border: 0; background: var(--card); box-shadow: var(--shadow); padding: 10px 14px; }
+.inp { width: 100%; min-width: 0; min-height: 46px; border-radius: 14px; border: 0; background: var(--card); box-shadow: var(--shadow); padding: 10px 14px; }
+.inp:focus, .inp:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--accent); }
 textarea.inp { min-height: 70px; resize: vertical; }
 .empty { text-align: center; color: var(--muted); padding: 24px 0; font-size: 15px; }
 
@@ -252,12 +239,13 @@ textarea.inp { min-height: 70px; resize: vertical; }
 .fx.quiz { cursor: pointer; }
 .fx.quiz:not(.show) .fx-sub, .fx.quiz:not(.show) .fx-ex { visibility: hidden; height: 0; margin: 0; }
 /* 단계식 단어 공부 */
+.lc > * { max-width: 100%; }
 .lc { position: relative; background: var(--card); border-radius: 26px; box-shadow: 0 2px 4px rgba(43, 34, 56, .06), 0 14px 34px rgba(106, 79, 187, .12);
   padding: 20px 18px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; }
 .lc .cat { align-self: flex-start; font-size: 12px; font-weight: 700; color: var(--accent); background: var(--soft); border-radius: 99px; padding: 3px 10px; }
 .lc.q { min-height: 200px; justify-content: center; }
 .lc.q .cat { position: absolute; top: 16px; left: 16px; }
-.lc-word { font-size: clamp(26px, 8.5vw, 36px); font-weight: 800; line-height: 1.2; overflow-wrap: anywhere; margin-top: 6px; }
+.lc-word { font-size: clamp(24px, 7.5vw, 34px); font-weight: 800; line-height: 1.2; overflow-wrap: anywhere; word-break: break-word; hyphens: auto; -webkit-hyphens: auto; margin-top: 6px; align-self: stretch; }
 .lc-ko { font-size: 22px; font-weight: 800; color: var(--eosin); margin: 4px 0 2px; }
 .lc-ask { margin: 8px 0 0; font-size: 14px; font-weight: 700; color: var(--muted); }
 .lc-hint { font-size: 14px; color: var(--muted); }
@@ -285,6 +273,10 @@ textarea.inp { min-height: 70px; resize: vertical; }
 .cal-legend i.l1 { background: color-mix(in srgb, var(--accent) 22%, var(--field)); } .cal-legend i.l2 { background: color-mix(in srgb, var(--accent) 45%, var(--field)); }
 .cal-legend i.l3 { background: color-mix(in srgb, var(--accent) 70%, var(--field)); } .cal-legend i.l4 { background: var(--accent); }
 .sync-code { font: 700 19px/1.5 ui-monospace, "SF Mono", Menlo, Consolas, monospace; letter-spacing: .04em; word-spacing: .2em; background: var(--field); border-radius: 12px; padding: 10px 12px; user-select: all; -webkit-user-select: all; overflow-wrap: anywhere; }
+.lc-pic { width: 120px; height: 120px; border-radius: 18px; background: var(--field); padding: 6px; margin: 6px auto 2px; }
+.feedback.has-pic { display: flex; gap: 12px; align-items: center; }
+.fb-pic { flex: none; width: 64px; height: 64px; border-radius: 12px; background: var(--card); padding: 3px; }
+.wl-pic, .pop-pic { display: block; width: 110px; height: 110px; border-radius: 16px; background: var(--field); padding: 6px; margin: 8px 0; }
 .add-mini { flex: none; width: 32px; height: 32px; border-radius: 50%; background: var(--soft); color: var(--accent); font-size: 20px; font-weight: 700; line-height: 1; }
 .add-mini.done { background: var(--good-soft); color: var(--good); font-size: 15px; }
 /* 퀴즈 */
@@ -295,7 +287,7 @@ textarea.inp { min-height: 70px; resize: vertical; }
 .opt.right { border-color: var(--good); background: var(--good-soft); }
 .opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
 .opt:disabled { cursor: default; color: var(--ink); }
-.feedback { margin-top: 14px; padding: 12px 14px; border-radius: var(--r-sm); font-size: 15.5px; }
+.feedback { overflow-wrap: anywhere; margin-top: 14px; padding: 12px 14px; border-radius: var(--r-sm); font-size: 15.5px; }
 .feedback.ok { background: var(--good-soft); } .feedback.no { background: var(--bad-soft); }
 .feedback b { display: block; margin-bottom: 2px; }
 
@@ -588,7 +580,6 @@ function renderWords() {
       <div class="tile"><b class="num">${streakNow()}</b><span>🔥 연속 일수</span></div>
     </div>
     <div class="card list-btns">
-      <button class="menu-btn" id="p-art"><span class="ic">🎯</span><span>der · die · das 퀴즈<small>관사 맞히기 20문제</small></span><span class="go">›</span></button>
       <button class="menu-btn" id="weak"><span class="ic">😵</span><span>자주 틀리는 단어<small>${weakIds().length ? `${weakIds().length}개 · 모아서 다시 연습` : '아직 없어요'}</small></span><span class="go">›</span></button>
       <button class="menu-btn" id="p-cloze"><span class="ic">✏️</span><span>빈칸 채우기<small>예문 속 단어 맞히기 10문제</small></span><span class="go">›</span></button>
     </div>
@@ -621,7 +612,6 @@ function renderWords() {
   $('#weak').onclick = openWeak;
   $('#cal').onclick = openCalendar;
   $('#fach').onclick = openFach;
-  $('#p-art').onclick = startArticle;
   $('#p-cloze').onclick = () => startCloze(S.set.cloze || 'choice');
   $('#add').onclick = () => openAdd();
   $('#voice-btn').onclick = openVoice;
@@ -697,7 +687,7 @@ function checkTyped(w, input, target) {
   let ok = goals.includes(v), note = '';
   if (!ok && goals.some(g => g.length >= 6 && lev(v, g) === 1)) { ok = true; note = '철자를 한 글자 다르게 썼어요'; }
   if (ok && w.art && !target) {
-    if (art && art !== w.art) { ok = false; note = `관사가 틀렸어요 → ${w.art}`; }
+    if (art && art !== w.art) note = (note ? note + ' · ' : '') + `관사는 ${w.art}예요`;
     else if (!art) note = (note ? note + ' · ' : '') + `관사도 같이 외워요: ${w.art}`;
   }
   return { ok, note };
@@ -728,6 +718,7 @@ function renderTask() {
       <div class="lc-word">${wordHtml(w)}${kindTag(w)}</div>${plHtml}
       <button class="say" data-say="${esc(sayText(w))}" aria-label="듣기">${ICON.say}</button>
       <div class="lc-ko">${esc(w.ko)}</div>
+      ${organPic(w, 'lc-pic')}
       ${w.def ? `<div class="info"><h4>ERKLÄRUNG</h4><p>${esc(w.def)}</p></div>` : ''}
       ${w.ex ? `<div class="info ex"><p>${markEx(w)}</p><button class="say sm" data-say="${esc(w.ex)}" aria-label="예문 듣기">${ICON.say}</button></div>` : ''}
     </div>
@@ -749,18 +740,18 @@ function renderTask() {
     body = `<div class="lc q">
       <span class="cat">${esc(w.catKo || w.cat)}</span>
       ${c ? `<p class="lc-ask">빈칸에 들어갈 독일어</p><p class="cz-sent" style="margin:4px 0 6px">${a ? `${esc(c.before)}<mark class="${a.ok ? 'ok' : 'no'}">${esc(c.word)}</mark>${esc(c.after)}` : `${esc(c.before)}<span class="gap">&nbsp;</span>${esc(c.after)}`}</p><div class="lc-hint">💡 ${esc(w.ko)}</div>`
-          : `<p class="lc-ask">독일어로 써 보세요${w.art ? ' (관사와 함께)' : ''}</p><div class="lc-word">${esc(w.ko)}</div>${!a && task.hint ? `<div class="lc-hint">첫 글자: ${esc((w.art ? w.art + ' ' : '') + w.de.slice(0, 2))}…</div>` : ''}`}
+          : `<p class="lc-ask">독일어로 써 보세요${w.art ? ' (관사도 같이)' : ''}</p><div class="lc-word">${esc(w.ko)}</div>${!a && task.hint ? `<div class="lc-hint">첫 글자: ${esc((w.art ? w.art + ' ' : '') + w.de.slice(0, 2))}…</div>` : ''}`}
     </div>
     <form id="tf" class="row" style="margin-top:12px" autocomplete="off">
       <input class="inp" id="ti" placeholder="${w.art && !c ? 'z. B. die Probe' : '독일어'}" autocapitalize="off" autocorrect="off" spellcheck="false"
         enterkeyhint="${a ? 'next' : 'go'}" ${a ? 'readonly' : ''} value="${esc(task.typed || '')}">
       <button class="btn" style="flex:none">${a ? '다음' : '확인'}</button></form>
-    ${!a && !c && !task.hint ? '<button class="chip" id="hint" style="margin-top:10px">💡 첫 글자 보기</button>' : ''}`;
+    ${!a ? `<div class="seg" style="margin-top:10px">${!c && !task.hint ? '<button class="chip" id="hint">💡 첫 글자 보기</button>' : ''}<button class="chip" id="skip">🤷 모르겠어요</button></div>` : ''}`;
   }
   if (a) {
-    body += `<div class="feedback ${a.ok ? 'ok' : 'no'}"><b>${a.ok ? '✓ Richtig!' : '✗ 아쉬워요'}</b>
+    body += `<div class="feedback ${a.ok ? 'ok' : 'no'}${organOf(w) ? ' has-pic' : ''}">${organPic(w, 'fb-pic')}<div><b>${a.ok ? '✓ Richtig!' : '✗ 아쉬워요'}</b>
       <span class="fb-word">${wordHtml(w)}</span> · ${esc(w.ko)}${a.note ? `<br><span class="sub">${esc(a.note)}</span>` : ''}
-      ${!a.ok ? '<br><span class="sub">조금 뒤에 다시 나와요</span>' : ''}</div>
+      ${!a.ok ? '<br><span class="sub">조금 뒤에 다시 나와요</span>' : ''}</div></div>
       ${(a.ok && task.t.startsWith('pick')) || typing ? '' : '<button class="btn wide" id="next" style="margin-top:12px">다음</button>'}`;
   }
   inner.innerHTML = top + body;
@@ -768,6 +759,12 @@ function renderTask() {
   inner.querySelectorAll('[data-say]').forEach(b => b.onclick = () => speak(b.dataset.say));
   $('#next')?.addEventListener('click', advance);
   $('#hint')?.addEventListener('click', () => { task.hint = true; renderTask(); });
+  // 모르겠어요: 틀린 것으로 치고 정답을 보여 줌 (조금 뒤에 다시 나옴)
+  $('#skip')?.addEventListener('click', () => {
+    const c = task.t === 'cloze' ? clozeOf(w) : null;
+    task.typed = c ? c.word : sayText(w);
+    answer(false, '정답을 보고 다음에 다시 해 봐요');
+  });
   inner.querySelectorAll('[data-o]').forEach(b => b.onclick = () => answer(b.dataset.o === w.id, '', b.dataset.o));
   // 쓰기: 확인(엔터) → 채점, 한 번 더 누르면 다음 문제. 키보드가 닫히지 않게 같은 터치 안에서 바로 다음 칸에 커서를 둠
   $('#tf')?.addEventListener('submit', e => {
@@ -958,41 +955,6 @@ function wireCommon(inner) {
   inner.querySelectorAll('[data-say]').forEach(b => b.onclick = () => speak(b.dataset.say));
 }
 
-// 관사 퀴즈
-function startArticle() {
-  const { words, fromLearned } = practicePool(isNoun, 20, 'artMiss');
-  if (!words.length) return toast('연습할 단어가 없어요');
-  PR = { kind: 'art', words, i: 0, score: 0, picked: null, wrong: [], fromLearned };
-  openOverlay(); renderArticle();
-}
-function renderArticle() {
-  const inner = $('#overlay-inner');
-  if (PR.i >= PR.words.length) return renderPracticeDone();
-  const w = PR.words[PR.i], ans = PR.picked != null;
-  inner.innerHTML = practiceTop() + `
-    <div class="pq">
-      <span class="cat">${esc(w.catKo)}</span>
-      <div class="pq-word">${ans ? `<span class="art ${w.art}">${w.art}</span> ` : '<span class="blank-art">___</span> '}${esc(w.de)}</div>
-      <div class="pq-ko">${esc(w.ko)}</div>
-      ${ans ? `<button class="say" data-say="${esc(sayText(w))}" aria-label="듣기">${ICON.say}</button>` : ''}
-      ${!PR.fromLearned && PR.i === 0 && !ans ? '<p class="hint" style="margin:10px 0 0">아직 배운 단어가 적어서 전체 단어에서 나와요</p>' : ''}
-    </div>
-    <div class="art-btns">${['der', 'die', 'das'].map(a => {
-      const cls = !ans ? '' : a === w.art ? 'right' : a === PR.picked ? 'wrong' : 'dim';
-      return `<button class="art-btn ${a} ${cls}" data-a="${a}" ${ans ? 'disabled' : ''}>${a}</button>`; }).join('')}</div>
-    ${ans && PR.picked !== w.art ? '<button class="btn wide" id="next" style="margin-top:12px">다음</button>' : '<div style="height:60px;flex:none"></div>'}`;
-  wireCommon(inner);
-  inner.querySelectorAll('[data-a]').forEach(b => b.onclick = () => {
-    PR.picked = b.dataset.a;
-    const ok = PR.picked === w.art;
-    if (ok) { PR.score++; bumpMiss('artMiss', w.id, -1); } else { PR.wrong.push(w); bumpMiss('artMiss', w.id, 1); }
-    logStudy('p', ok);
-    save(); renderArticle();
-    if (ok) setTimeout(() => { if (PR && PR.kind === 'art' && PR.words[PR.i] === w) { PR.i++; PR.picked = null; renderArticle(); } }, 650);
-  });
-  $('#next')?.addEventListener('click', () => { PR.i++; PR.picked = null; renderArticle(); });
-}
-
 // 빈칸 채우기: 예문에서 그 단어(어미 3글자까지)를 찾아 빈칸으로
 function clozeOf(w) {
   if (!w.ex || w.de.includes(' ')) return null;
@@ -1067,7 +1029,7 @@ function renderPracticeDone() {
       <div class="btns"><button class="btn" id="again">다시 하기</button><button class="btn ghost" id="go-close">닫기</button></div>
     </div>`;
   $('#close').onclick = $('#go-close').onclick = closePractice;
-  $('#again').onclick = () => (PR.kind === 'art' ? startArticle() : startCloze(PR.mode));
+  $('#again').onclick = () => startCloze(PR.mode);
 }
 
 // ═════════ Fachsprache 모음 ═════════
@@ -1100,10 +1062,30 @@ function renderFach() {
   };
   drawFach();
 }
+// 단어 → 그림 key (Fachsprache 모음의 일상어·의학 용어로 찾고, 몇 개는 직접 지정)
+let ORGAN = null;
+function organOf(w) {
+  if (!ORGAN) {
+    ORGAN = new Map(Object.entries({ 'dünndarm': 'jejunum ileum', mandel: 'tonsil', 'brustdrüse': 'breast', bronchiole: 'bronchus', lungenlappen: 'lung', lobektomie: 'lung', zervix: 'cervix', 'lymphfollikel': 'lymph' }));
+    for (const g of FACH) for (const [al, fa, , , , , mk] of g.rows) {
+      if (!mk) continue;
+      const k = splitTerm(al).de.toLowerCase();
+      if (!ORGAN.has(k)) ORGAN.set(k, mk);
+      for (const p of fa.split(' / ')) { const n = p.replace(/\s*\(.*\)/, '').trim().toLowerCase(); if (n && !ORGAN.has(n)) ORGAN.set(n, mk); }
+    }
+  }
+  return ORGAN.get(w.de.toLowerCase()) || '';
+}
+const organPic = (w, cls) => { const k = organOf(w); return k ? `<button class="${cls}" data-bm="${esc(k)}" data-t="${esc(sayText(w))}||${esc(w.ko)}" aria-label="그림 크게 보기">${BM.svg(k)}</button>` : ''; };
+// 어느 화면이든 그림을 누르면 크게
+document.addEventListener('click', e => {
+  const b = e.target.closest('.lc-pic, .fb-pic, .wl-pic, .pop-pic'); if (!b) return;
+  openBodyMap(b.dataset.bm, b.dataset.t.split('|'));
+});
 function openBodyMap(keys, [al, fa, ko]) {
   let whole = false;
   const draw = () => {
-    openSheet(`<div class="sheet-head"><h2>${esc(splitTerm(al).de)} = <span style="color:var(--accent)">${esc(fa)}</span></h2><button class="x-btn" id="sh-close" aria-label="닫기">${ICON.x}</button></div>
+    openSheet(`<div class="sheet-head"><h2>${esc(splitTerm(al).de)}${fa ? ` = <span style="color:var(--accent)">${esc(fa)}</span>` : ''}</h2><button class="x-btn" id="sh-close" aria-label="닫기">${ICON.x}</button></div>
       <div class="sheet-body">
         <p class="pop-ko" style="margin-top:0">${esc(ko)}</p>
         <div class="bm-big">${BM.svg(keys, 'bm', whole)}</div>
@@ -1202,6 +1184,7 @@ function drawList() {
       ${pl ? `<p class="sub">${isVerb(w) ? '' : 'Pl. '}${esc(pl)}</p>` : ''}
       ${w.def ? `<p>${esc(w.def)}</p>` : ''}
       ${w.ex ? `<p class="ex">${esc(w.ex)}</p>` : ''}
+      ${organPic(w, 'wl-pic')}
       <div class="tools"><button class="say sm" data-say="${esc(sayText(w))}" aria-label="듣기">${ICON.say}</button>
       ${w.ex ? `<button class="chip" data-say="${esc(w.ex)}">예문 듣기</button>` : ''}
       ${w.mine ? '<button class="chip" data-del style="margin-left:auto;color:var(--bad)">지우기</button>' : ''}</div></div>`);
@@ -1384,6 +1367,7 @@ function showWordPop(tok) {
     openSheet(head(wordHtml(w)) + `<div class="sheet-body">
       ${pl ? `<p class="sub" style="margin:0">${isVerb(w) ? '' : 'Pl. '}${esc(pl)}</p>` : ''}
       <p class="pop-ko">${esc(w.ko)}</p>
+      ${organPic(w, 'pop-pic')}
       ${w.def ? `<div class="info"><h4>ERKLÄRUNG</h4><p>${esc(w.def)}</p></div>` : ''}
       ${w.ex ? `<div class="info ex"><p>${markEx(w)}</p><button class="say sm" data-say="${esc(w.ex)}" aria-label="예문 듣기">${ICON.say}</button></div>` : ''}
       <div class="row" style="margin-top:14px"><button class="btn ghost" data-say="${esc(sayText(w))}">${ICON.say} 듣기</button><span class="btn ghost" style="opacity:.7">✓ 단어장에 있어요</span></div>
