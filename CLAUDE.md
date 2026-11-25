@@ -55,7 +55,9 @@ Keine Build-Schritte: `index.html` lädt `words.js`, `words-auto.js`, `lessons.j
 - Quiz: 4 Fragen, plausible falsche Antworten, keine Trickfragen. `ex` kurz auf Koreanisch.
 - Keine Wiederholung bestehender Kapitel (siehe Kapitel-IDs in allen lessons-Dateien); vertiefen ist okay.
 
-## Wöchentlicher Ablauf (automatischer Job)
+## Wöchentlicher Ablauf ("새 장 올려줘")
+
+Der Cloud-Job hat keine Schreibrechte auf GitHub. Er schickt montags nur eine Erinnerung mit den nächsten zwei Themen. Wenn die Nutzerin danach "새 장 올려줘" sagt, führt eine lokale Claude-Sitzung (mit GitHub-Zugang) die folgenden Schritte aus und pusht selbst.
 
 1. **Gemeldete Fehler zuerst**: `gh issue list --repo trykyn/patho-deutsch --label content --state open`. Jede Meldung lesen; wenn berechtigt, die Stelle (in der passenden Datei) korrigieren und das Issue mit einem kurzen koreanischen Kommentar schließen (was geändert wurde). Wenn nicht berechtigt oder unklar: koreanisch kommentieren, offen lassen. Falls `gh` nicht verfügbar ist, diesen Schritt überspringen.
 2. **2 neue Kapitel** zu den nächsten offenen Themen in `TOPICS.md` schreiben und in `lessons-auto.js` anhängen (`added` = heutiges Datum). Themen in `TOPICS.md` abhaken (`- [x]`, mit Datum). Wenn alle Themen erledigt sind, 3–5 neue sinnvolle Themen ergänzen (Pathologie-Labor-Alltag) und davon nehmen.
