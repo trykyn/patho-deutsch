@@ -3,8 +3,8 @@
 Von oben nach unten abarbeiten, 2 pro Woche. Erledigt = `- [x] … (YYYY-MM-DD)`.
 Bereits vorhanden (nicht wiederholen): Probenweg, Fixierung/Entwässerung, Schneiden/Artefakte, HE, Spezialfärbungen, Immunhistochemie, Tumorpathologie, Lymphome, Lunge, Lungentransplantat-Abstoßung, Schnellschnitt, Sicherheit/Qualität, Magen-Darm, Mamma, Nierenbiopsie, Gynäkopathologie, Haut, Knochenmark, Zytologie, Molekularpathologie, Digitale Pathologie, Deutsch im Laboralltag.
 
-- [ ] Schilddrüse (Knoten, papilläres Karzinom, Schnellschnitt) — path
-- [ ] Leberbiopsie (Hepatitis, Fibrose-Staging, Färbepanel) — path
+- [x] Schilddrüse (Knoten, papilläres Karzinom, Schnellschnitt) — path (2026-11-25)
+- [x] Leberbiopsie (Hepatitis, Fibrose-Staging, Färbepanel) — path (2026-11-25)
 - [ ] Prostata (Stanzbiopsien nach Lokalisation, Gleason/ISUP, TUR-P) — path
 - [ ] Immunhistochemie: Fehler erkennen und beheben (schwach, Hintergrund, Randeffekte) — lab
 - [ ] Pankreas und Whipple-Präparat (Zuschnitt, Ränder) — path
