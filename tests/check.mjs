@@ -12,10 +12,10 @@ const err = m => errors.push(m);
 // index.html 이 불러오는 스크립트 순서대로 실행
 const html = read('index.html');
 const scripts = [...html.matchAll(/<script src="([^"]+)"><\/script>/g)].map(m => m[1]);
-let WORDS, LESSONS;
+let WORDS, LESSONS, DEF_KO;
 try {
-  const code = scripts.map(read).join('\n;\n') + '\n;return { WORDS, LESSONS };';
-  ({ WORDS, LESSONS } = new Function(code)());
+  const code = scripts.map(read).join('\n;\n') + '\n;return { WORDS, LESSONS, DEF_KO: typeof DEF_KO === "undefined" ? {} : DEF_KO };';
+  ({ WORDS, LESSONS, DEF_KO } = new Function(code)());
 } catch (e) { console.error('데이터 파일 실행 오류:', e.message); process.exit(1); }
 
 // 서비스 워커가 모든 스크립트를 캐시하는지
@@ -29,6 +29,7 @@ for (const w of WORDS) {
   seen.add(w.id.toLowerCase());
   for (const k of ['de', 'ko', 'def', 'ex', 'cat', 'catKo']) if (!w[k]) err(`단어 ${w.de}: ${k} 비어 있음`);
   if (!['', 'der', 'die', 'das'].includes(w.art)) err(`단어 ${w.de}: 관사 이상 "${w.art}"`);
+  if (!DEF_KO[w.id]) err(`단어 ${w.de}: words-ko.js 에 한국어 설명이 없음`);
 }
 for (const [file, name] of [['words.js', 'WORDS_RAW'], ['words-auto.js', 'WORDS_AUTO_RAW']]) {
   const raw = read(file).split(`const ${name} = \``)[1].split('`;')[0];

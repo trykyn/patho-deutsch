@@ -277,6 +277,9 @@ textarea.inp { min-height: 70px; resize: vertical; }
 .feedback.has-pic { display: flex; gap: 12px; align-items: center; }
 .fb-pic { flex: none; width: 64px; height: 64px; border-radius: 12px; background: var(--card); padding: 3px; }
 .wl-pic, .pop-pic { display: block; width: 110px; height: 110px; border-radius: 16px; background: var(--field); padding: 6px; margin: 8px 0; }
+.retry { margin-top: 12px; padding: 10px 12px; border-radius: 12px; background: var(--bad-soft); color: var(--bad); font-size: 15px; font-weight: 600; overflow-wrap: anywhere; }
+.retry s { opacity: .8; }
+.def-ko { margin-top: 6px !important; padding-top: 6px; border-top: 1px dashed var(--line); color: var(--muted); font-size: 14.5px; }
 .add-mini { flex: none; width: 32px; height: 32px; border-radius: 50%; background: var(--soft); color: var(--accent); font-size: 20px; font-weight: 700; line-height: 1; }
 .add-mini.done { background: var(--good-soft); color: var(--good); font-size: 15px; }
 /* 퀴즈 */
@@ -321,6 +324,7 @@ textarea.inp { min-height: 70px; resize: vertical; }
 
 <script src="words.js"></script>
 <script src="words-auto.js"></script>
+<script src="words-ko.js"></script>
 <script src="lessons.js"></script>
 <script src="lessons2.js"></script>
 <script src="lessons-auto.js"></script>
@@ -531,6 +535,7 @@ function plural(w) {
 }
 const artHtml = w => (w.art ? `<span class="art ${esc(w.art)}">${esc(w.art)}</span> ` : '');
 const wordHtml = w => artHtml(w) + esc(w.de);
+const defKo = w => (typeof DEF_KO !== 'undefined' && DEF_KO[w.id]) || '';
 const sayText = w => (w.art ? w.art + ' ' : '') + w.de;
 const kindTag = w => (isVerb(w) ? ' <span class="kind">Verb</span>' : '');
 function markEx(w) {
@@ -719,7 +724,7 @@ function renderTask() {
       <button class="say" data-say="${esc(sayText(w))}" aria-label="듣기">${ICON.say}</button>
       <div class="lc-ko">${esc(w.ko)}</div>
       ${organPic(w, 'lc-pic')}
-      ${w.def ? `<div class="info"><h4>ERKLÄRUNG</h4><p>${esc(w.def)}</p></div>` : ''}
+      ${w.def ? `<div class="info"><h4>ERKLÄRUNG</h4><p>${esc(w.def)}</p>${defKo(w) ? `<p class="def-ko">${esc(defKo(w))}</p>` : ''}</div>` : ''}
       ${w.ex ? `<div class="info ex"><p>${markEx(w)}</p><button class="say sm" data-say="${esc(w.ex)}" aria-label="예문 듣기">${ICON.say}</button></div>` : ''}
     </div>
     <button class="btn wide" id="next" style="margin-top:14px">외웠어요, 다음 →</button>`;
@@ -739,9 +744,10 @@ function renderTask() {
     const c = task.t === 'cloze' ? clozeOf(w) : null;
     body = `<div class="lc q">
       <span class="cat">${esc(w.catKo || w.cat)}</span>
-      ${c ? `<p class="lc-ask">빈칸에 들어갈 독일어</p><p class="cz-sent" style="margin:4px 0 6px">${a ? `${esc(c.before)}<mark class="${a.ok ? 'ok' : 'no'}">${esc(c.word)}</mark>${esc(c.after)}` : `${esc(c.before)}<span class="gap">&nbsp;</span>${esc(c.after)}`}</p><div class="lc-hint">💡 ${esc(w.ko)}</div>`
+      ${c ? `<p class="lc-ask">빈칸에 들어갈 독일어${!a && task.retried ? ` · 첫 글자: ${esc(c.word.slice(0, 2))}…` : ''}</p><p class="cz-sent" style="margin:4px 0 6px">${a ? `${esc(c.before)}<mark class="${a.ok ? 'ok' : 'no'}">${esc(c.word)}</mark>${esc(c.after)}` : `${esc(c.before)}<span class="gap">&nbsp;</span>${esc(c.after)}`}</p><div class="lc-hint">💡 ${esc(w.ko)}</div>`
           : `<p class="lc-ask">독일어로 써 보세요${w.art ? ' (관사도 같이)' : ''}</p><div class="lc-word">${esc(w.ko)}</div>${!a && task.hint ? `<div class="lc-hint">첫 글자: ${esc((w.art ? w.art + ' ' : '') + w.de.slice(0, 2))}…</div>` : ''}`}
     </div>
+    ${!a && task.retried ? `<div class="retry">✗ <s>${esc(task.retried)}</s> — 아쉬워요, 한 번 더 써 보세요</div>` : ''}
     <form id="tf" class="row" style="margin-top:12px" autocomplete="off">
       <input class="inp" id="ti" placeholder="${w.art && !c ? 'z. B. die Probe' : '독일어'}" autocapitalize="off" autocorrect="off" spellcheck="false"
         enterkeyhint="${a ? 'next' : 'go'}" ${a ? 'readonly' : ''} value="${esc(task.typed || '')}">
@@ -774,7 +780,13 @@ function renderTask() {
     task.typed = v;
     const c = task.t === 'cloze' ? clozeOf(w) : null;
     const r = checkTyped(w, v, c?.word);
-    answer(r.ok, r.note);
+    if (!r.ok && !task.retried) {
+      // 처음 틀리면 정답을 보여 주지 않고 한 번 더 쓰게 함
+      task.retried = v; task.hint = true;
+      bumpMiss('miss', w.id, 1); ST.missed.add(w.id); save();
+      return renderTask();
+    }
+    answer(r.ok, r.ok && task.retried ? ['두 번째에 맞혔어요', r.note].filter(Boolean).join(' · ') : r.note);
   });
   if (task.t === 'intro') autoSay(sayText(w));
   if (typing) { const ti = $('#ti'); ti?.focus({ preventScroll: true }); if (a) ti?.setSelectionRange?.(ti.value.length, ti.value.length); }
@@ -782,7 +794,7 @@ function renderTask() {
 function answer(ok, note, picked) {
   const task = ST.queue[0], w = byId(task.id), t = today();
   ST.ans = { ok, note, picked };
-  bumpMiss('miss', w.id, ok ? 0 : 1);
+  if (!task.retried) bumpMiss('miss', w.id, ok ? 0 : 1);
   if (!ok) {
     ST.missed.add(w.id);
     // 3문제 뒤에 같은 문제를 다시 (보기 순서는 새로)
@@ -792,11 +804,12 @@ function answer(ok, note, picked) {
   }
   if (ST.mode === 'review' && task.first) {
     const p = S.prog[w.id] || { b: 1 };
-    if (ok) { const b = Math.min((p.b || 1) + 1, INTERVAL.length - 1); S.prog[w.id] = { b, d: t + INTERVAL[b] }; ST.wordsDone++; }
+    if (ok && !task.retried) { const b = Math.min((p.b || 1) + 1, INTERVAL.length - 1); S.prog[w.id] = { b, d: t + INTERVAL[b] }; ST.wordsDone++; }
+    else if (ok) { S.prog[w.id] = { b: p.b || 1, d: t + 1 }; ST.wordsDone++; } // 두 번째에 맞힘: 내일 한 번 더
     else S.prog[w.id] = { b: 1, d: t + 1 };
-    logStudy('r', ok);
+    logStudy('r', ok && !task.retried);
   }
-  if (ST.mode === 'weak' && task.first) { if (ok) bumpMiss('miss', w.id, -1); logStudy('p', ok); }
+  if (ST.mode === 'weak' && task.first) { if (ok && !task.retried) bumpMiss('miss', w.id, -1); logStudy('p', ok && !task.retried); }
   if (ok && task.t === 'type') ST.typedOk.add(w.id);
   if (ST.mode === 'today' && ok && ST.typedOk.has(w.id) && !ST.queue.slice(1).some(x => x.id === w.id)) {
     S.prog[w.id] = { b: 1, d: t + 1 };
@@ -1182,7 +1195,7 @@ function drawList() {
     const w = byId(li.dataset.id), pl = plural(w);
     li.insertAdjacentHTML('beforeend', `<div class="more">
       ${pl ? `<p class="sub">${isVerb(w) ? '' : 'Pl. '}${esc(pl)}</p>` : ''}
-      ${w.def ? `<p>${esc(w.def)}</p>` : ''}
+      ${w.def ? `<p>${esc(w.def)}</p>` : ''}${defKo(w) ? `<p class="def-ko">${esc(defKo(w))}</p>` : ''}
       ${w.ex ? `<p class="ex">${esc(w.ex)}</p>` : ''}
       ${organPic(w, 'wl-pic')}
       <div class="tools"><button class="say sm" data-say="${esc(sayText(w))}" aria-label="듣기">${ICON.say}</button>
@@ -1368,7 +1381,7 @@ function showWordPop(tok) {
       ${pl ? `<p class="sub" style="margin:0">${isVerb(w) ? '' : 'Pl. '}${esc(pl)}</p>` : ''}
       <p class="pop-ko">${esc(w.ko)}</p>
       ${organPic(w, 'pop-pic')}
-      ${w.def ? `<div class="info"><h4>ERKLÄRUNG</h4><p>${esc(w.def)}</p></div>` : ''}
+      ${w.def ? `<div class="info"><h4>ERKLÄRUNG</h4><p>${esc(w.def)}</p>${defKo(w) ? `<p class="def-ko">${esc(defKo(w))}</p>` : ''}</div>` : ''}
       ${w.ex ? `<div class="info ex"><p>${markEx(w)}</p><button class="say sm" data-say="${esc(w.ex)}" aria-label="예문 듣기">${ICON.say}</button></div>` : ''}
       <div class="row" style="margin-top:14px"><button class="btn ghost" data-say="${esc(sayText(w))}">${ICON.say} 듣기</button><span class="btn ghost" style="opacity:.7">✓ 단어장에 있어요</span></div>
     </div>`);
