@@ -280,6 +280,9 @@ textarea.inp { min-height: 70px; resize: vertical; }
 .retry { margin-top: 12px; padding: 10px 12px; border-radius: 12px; background: var(--bad-soft); color: var(--bad); font-size: 15px; font-weight: 600; overflow-wrap: anywhere; }
 .retry s { opacity: .8; }
 .def-ko { margin-top: 6px !important; padding-top: 6px; border-top: 1px dashed var(--line); color: var(--muted); font-size: 14.5px; }
+.copy-box { margin-top: 12px; padding: 12px 14px; border-radius: 14px; background: var(--card); box-shadow: 0 0 0 2px var(--eosin) inset; text-align: center; }
+.copy-word { font-size: 24px; font-weight: 800; margin: 4px 0 2px; overflow-wrap: anywhere; }
+.copy-err { display: block; margin-top: 4px; color: var(--bad); font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
 .add-mini { flex: none; width: 32px; height: 32px; border-radius: 50%; background: var(--soft); color: var(--accent); font-size: 20px; font-weight: 700; line-height: 1; }
 .add-mini.done { background: var(--good-soft); color: var(--good); font-size: 15px; }
 /* 퀴즈 */
@@ -716,6 +719,7 @@ function renderTask() {
   const pl = plural(w), plHtml = pl ? `<div class="plural">${isVerb(w) ? '' : 'Pl. '}${esc(pl)}</div>` : '';
   const a = ST.ans; // { ok, note, picked }
   const typing = task.t === 'type' || task.t === 'cloze';
+  const copying = !!(a && !a.ok && typing && !task.copied);
   let body = '';
   if (task.t === 'intro') {
     body = `<div class="lc">
@@ -748,16 +752,20 @@ function renderTask() {
           : `<p class="lc-ask">독일어로 써 보세요${w.art ? ' (관사도 같이)' : ''}</p><div class="lc-word">${esc(w.ko)}</div>${!a && task.hint ? `<div class="lc-hint">첫 글자: ${esc((w.art ? w.art + ' ' : '') + w.de.slice(0, 2))}…</div>` : ''}`}
     </div>
     ${!a && task.retried ? `<div class="retry">✗ <s>${esc(task.retried)}</s> — 아쉬워요, 한 번 더 써 보세요</div>` : ''}
+    ${copying ? `<div class="copy-box"><span class="sub">👀 정답을 보고 한 번 따라 써 보세요</span>
+      <div class="copy-word">${c ? esc(c.word) : wordHtml(w)}</div>
+      ${task.copyErr ? `<span class="copy-err">✗ <s>${esc(task.copyErr)}</s> — 글자를 다시 확인해 보세요</span>` : ''}</div>` : ''}
     <form id="tf" class="row" style="margin-top:12px" autocomplete="off">
-      <input class="inp" id="ti" placeholder="${w.art && !c ? 'z. B. die Probe' : '독일어'}" autocapitalize="off" autocorrect="off" spellcheck="false"
-        enterkeyhint="${a ? 'next' : 'go'}" ${a ? 'readonly' : ''} value="${esc(task.typed || '')}">
-      <button class="btn" style="flex:none">${a ? '다음' : '확인'}</button></form>
+      <input class="inp" id="ti" placeholder="${copying ? '위의 정답을 따라 쓰기' : w.art && !c ? 'z. B. die Probe' : '독일어'}" autocapitalize="off" autocorrect="off" spellcheck="false"
+        enterkeyhint="${a && !copying ? 'next' : 'go'}" ${a && !copying ? 'readonly' : ''} value="${copying ? '' : esc(task.typed || '')}">
+      <button class="btn" style="flex:none">${a && !copying ? '다음' : '확인'}</button></form>
+    ${copying ? '<div class="seg" style="margin-top:10px"><button class="chip" id="copy-skip">그냥 넘어가기 →</button></div>' : ''}
     ${!a ? `<div class="seg" style="margin-top:10px">${!c && !task.hint ? '<button class="chip" id="hint">💡 첫 글자 보기</button>' : ''}<button class="chip" id="skip">🤷 모르겠어요</button></div>` : ''}`;
   }
   if (a) {
     body += `<div class="feedback ${a.ok ? 'ok' : 'no'}${organOf(w) ? ' has-pic' : ''}">${organPic(w, 'fb-pic')}<div><b>${a.ok ? '✓ Richtig!' : '✗ 아쉬워요'}</b>
       <span class="fb-word">${wordHtml(w)}</span> · ${esc(w.ko)}${a.note ? `<br><span class="sub">${esc(a.note)}</span>` : ''}
-      ${!a.ok ? '<br><span class="sub">조금 뒤에 다시 나와요</span>' : ''}</div></div>
+      ${!a.ok ? `<br><span class="sub">${task.copied ? '👍 따라 썼어요. ' : ''}조금 뒤에 다시 나와요</span>` : ''}</div></div>
       ${(a.ok && task.t.startsWith('pick')) || typing ? '' : '<button class="btn wide" id="next" style="margin-top:12px">다음</button>'}`;
   }
   inner.innerHTML = top + body;
@@ -765,18 +773,24 @@ function renderTask() {
   inner.querySelectorAll('[data-say]').forEach(b => b.onclick = () => speak(b.dataset.say));
   $('#next')?.addEventListener('click', advance);
   $('#hint')?.addEventListener('click', () => { task.hint = true; renderTask(); });
+  $('#copy-skip')?.addEventListener('click', advance);
   // 모르겠어요: 틀린 것으로 치고 정답을 보여 줌 (조금 뒤에 다시 나옴)
   $('#skip')?.addEventListener('click', () => {
-    const c = task.t === 'cloze' ? clozeOf(w) : null;
-    task.typed = c ? c.word : sayText(w);
-    answer(false, '정답을 보고 다음에 다시 해 봐요');
+    task.typed = '';
+    answer(false, '');
   });
   inner.querySelectorAll('[data-o]').forEach(b => b.onclick = () => answer(b.dataset.o === w.id, '', b.dataset.o));
   // 쓰기: 확인(엔터) → 채점, 한 번 더 누르면 다음 문제. 키보드가 닫히지 않게 같은 터치 안에서 바로 다음 칸에 커서를 둠
   $('#tf')?.addEventListener('submit', e => {
     e.preventDefault();
-    if (ST.ans) return advance();
+    if (ST.ans && !copying) return advance();
     const v = $('#ti').value; if (!v.trim()) return;
+    if (copying) {
+      const cc = task.t === 'cloze' ? clozeOf(w) : null;
+      if (checkTyped(w, v, cc?.word).ok) { task.copied = true; task.typed = v; task.copyErr = ''; autoSay(sayText(w)); }
+      else task.copyErr = v;
+      return renderTask();
+    }
     task.typed = v;
     const c = task.t === 'cloze' ? clozeOf(w) : null;
     const r = checkTyped(w, v, c?.word);
@@ -789,7 +803,7 @@ function renderTask() {
     answer(r.ok, r.ok && task.retried ? ['두 번째에 맞혔어요', r.note].filter(Boolean).join(' · ') : r.note);
   });
   if (task.t === 'intro') autoSay(sayText(w));
-  if (typing) { const ti = $('#ti'); ti?.focus({ preventScroll: true }); if (a) ti?.setSelectionRange?.(ti.value.length, ti.value.length); }
+  if (typing) { const ti = $('#ti'); ti?.focus({ preventScroll: true }); if (a && !copying) ti?.setSelectionRange?.(ti.value.length, ti.value.length); }
 }
 function answer(ok, note, picked) {
   const task = ST.queue[0], w = byId(task.id), t = today();
